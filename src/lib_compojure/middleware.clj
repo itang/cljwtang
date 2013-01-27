@@ -4,13 +4,20 @@
             [noir.response :refer [set-headers]]
             [stencil.loader :refer [invalidate-cache]]))
 
+(defn- static-resource-request? [request]
+  (let [^String uri (:uri request)]
+    ;; OPTIMIZE
+    (.contains uri ".")))
+
 (defn wrap-stencil-refresh [handler]
-  (fn [request] 
-    (invalidate-cache)
+  (fn [request]
+    (if-not (static-resource-request? request)
+      (invalidate-cache))
     (handler request)))
 
-(defn- handle-with-log [handler request uri]
-  (let [method (-> (:request-method request)
+(defn- handle-with-log [handler request]
+  (let [uri (:uri request)
+        method (-> (:request-method request)
                  name
                  str/upper-case)
         req-info (str method " " uri)]
@@ -22,10 +29,9 @@
 
 (defn wrap-request-log [handler]
   (fn [request]
-    (let [^String uri (:uri request)]
-      (if-not (.contains uri ".") ; 非.js, .css, .jpg等web资源
-        (handle-with-log handler request uri)
-        (handler request)))))
+    (if-not (static-resource-request? request)
+      (handle-with-log handler request)
+      (handler request))))
 
 (defn wrap-dev-helper [handler]
   (-> handler 

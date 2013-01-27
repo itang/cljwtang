@@ -9,20 +9,23 @@
     (invalidate-cache)
     (handler request)))
 
+(defn- handle-with-log [handler request uri]
+  (let [method (-> (:request-method request)
+                 name
+                 str/upper-case)
+        req-info (str method " " uri)]
+    (info req-info)
+    (let [reps (handler request)
+          status (:status reps)]
+      (info req-info "->" status)
+      reps)))
+
 (defn wrap-request-log [handler]
   (fn [request]
     (let [^String uri (:uri request)]
       (if-not (.contains uri ".") ; 非.js, .css, .jpg等web资源
-        (let [method (-> (:request-method request)
-                       name
-                       str/upper-case)
-              req-info (str method " " uri)]
-          (info req-info)
-          (let [reps (handler request)
-                status (:status reps)]
-            (info req-info "->" status)
-            reps)))
-        (handler request))))
+        (handle-with-log handler request uri)
+        (handler request)))))
 
 (defn wrap-dev-helper [handler]
   (-> handler 

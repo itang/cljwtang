@@ -45,3 +45,15 @@
         (set-headers {"Profile-Time"
                       (str (- (System/currentTimeMillis) start) "ms")}
                      ret)))))
+
+(defn wrap-exception-handling [handler & [f]]
+  (fn [request]
+    (try
+      (handler request)
+      (catch Exception e
+        (if f
+          (f request e)
+          {:status 500
+           :body "Application Error!"
+           :headers {"Content-Type" "text/html; charset=utf-8"}
+           :exception e})))))

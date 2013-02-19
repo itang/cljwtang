@@ -13,9 +13,3 @@
            (is (= "ab" (h1 {:params {:a "a" :b "b"}})))
            (is (= "a" (h1 {:params {:a "a"}})))
            (is (= "aba" (h2 {:params {:a "a" :b "b"}})))))
-
-(deftest ajax-request?-test
-  (is (ajax-request? {:headers {"x-requested-with" "XMLHttpRequest"}}))
-  (is (not (ajax-request? {:headers {"x-requested-with" "XXXClient"}})))
-  (is (not (ajax-request? {:headers {}})))
-  (is (not (ajax-request? {:headers nil}))))

@@ -1,4 +1,4 @@
-(ns lib-compojure.response
+(ns cljwtang.response
   (:require [noir.response :refer [content-type]]))
 
 (defn html

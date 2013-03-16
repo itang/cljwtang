@@ -1,6 +1,6 @@
-(ns lib-compojure.request-test
+(ns cljwtang.request-test
   (:use clojure.test
-        lib-compojure.request))
+        cljwtang.request))
 
 (deftest ajax?-test
   (is (ajax? {:headers {"x-requested-with" "XMLHttpRequest"}}))

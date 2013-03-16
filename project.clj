@@ -1,10 +1,10 @@
-(defproject lib-compojure "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+(defproject cljwtang "0.1.0-SNAPSHOT"
+  :description "clojure web app libs"
+  :url "http://cljwtang.itang.me"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.4.0"]
-                 [lib-noir "0.4.1"]
+                 [lib-noir "0.4.8"]
                  [stencil "0.3.2"]
                  [org.clojure/tools.logging "0.2.6"]]
   :profiles {:dev {:plugins [[codox "0.6.4"]

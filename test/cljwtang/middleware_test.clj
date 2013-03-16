@@ -1,14 +1,13 @@
-(ns lib-compojure.middleware-test
+(ns cljwtang.middleware-test
   (use clojure.test
-       lib-compojure.middleware))
+       cljwtang.middleware))
 
-(defn- h1 [req]
-  "a")
+(defn- h1 [req] "a")
 
 (defn- h2 [req]
   (throw (Exception. "exception")))
 
-(defn- f [req e]
+(defn- f [req ^Exception e]
   (str "an " (.getMessage e)))
 
 (deftest wrap-exception-handling-test

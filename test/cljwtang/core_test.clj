@@ -1,6 +1,6 @@
-(ns lib-compojure.util-test
+(ns cljwtang.core-test
   (:use clojure.test
-        lib-compojure.util))
+        cljwtang.core))
 
 (defhandler h1 [a b]
   (str a b))

@@ -6,7 +6,8 @@
   :dependencies [[org.clojure/clojure "1.4.0"]
                  [lib-noir "0.4.8"]
                  [stencil "0.3.2"]
-                 [org.clojure/tools.logging "0.2.6"]]
+                 [org.clojure/tools.logging "0.2.6"]
+                 [me.raynes/conch "0.5.0"]]
   :profiles {:dev {:plugins [[codox "0.6.4"]
                              [jonase/eastwood "0.0.2"]
                              [lein-localrepo "0.4.1"]
@@ -16,7 +17,8 @@
                              [lein-bikeshed "0.1.0"]]}
              :1.4.0 {:dependencies [[org.clojure/clojure "1.4.0"]]}
              :1.5.0 {:dependencies [[org.clojure/clojure "1.5.1"]]}}
-   :aliases {"run-tests" ["with-profile" "1.4.0:1.5.0" "test"]}
+   :aliases {"run-tests" ["with-profile" "1.4.0:1.5.0" "test"]
+             "check-all" ["run" "-m" "cljwtang.tools.check-all"]}
    :warn-on-reflection true
    :injections [(require 'clojure.pprint)]
    :pom-addition [:developers [:developer [:name "itang"]]])

@@ -2,18 +2,28 @@
   (:require [clojure.string :as str]
             [clojure.tools.logging :refer [info]]
             [noir.response :refer [set-headers]]
-            [stencil.loader :refer [invalidate-cache]]))
+            [cljwtang.core :refer :all]
+            [cljwtang.view :refer :all]
+            [cljwtang.templates :as templates]
+            [cljwtang.request :refer [ajax?]]))
 
 (defn- static-resource-request? [request]
   (let [^String uri (:uri request)]
     ;; OPTIMIZE
     (.contains uri ".")))
 
-(defn wrap-stencil-refresh [handler]
+(defn wrap-templates-refresh [handler]
   (fn [request]
-    (if-not (static-resource-request? request)
-      (invalidate-cache))
+    (when-not (static-resource-request? request)
+      (templates/clear-template-cache!))
     (handler request)))
+
+(defn wrap-view [handler]
+  (fn [req]
+    (if (ajax? req)
+      (handler req)
+      (binding [*more-js* nil *more-css* nil]
+        (handler req)))))
 
 (defn- handle-with-log [handler request]
   (let [uri (:uri request)
@@ -34,16 +44,18 @@
       (handler request))))
 
 (defn wrap-dev-helper [handler]
-  (-> handler 
-    wrap-stencil-refresh
+  (-> handler
+    wrap-templates-refresh
     wrap-request-log))
 
 (defn wrap-profile [handler]
   (fn [request]
-    (let [start (System/currentTimeMillis)]
+    (let [start (System/nanoTime)]
       (when-let [ret (handler request)]
-        (set-headers {"Profile-Time"
-                      (str (- (System/currentTimeMillis) start) "ms")}
+        (set-headers {"X-Runtime"
+                      (->> (- (System/nanoTime) start)
+                        (* 0.000000001)
+                        (format "%.5f"))}
                      ret)))))
 
 (defn wrap-exception-handling [handler & [f]]

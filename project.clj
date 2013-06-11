@@ -18,7 +18,7 @@
 
                  [coercer "0.2.0"]                    ; conv types
                  [environ "0.4.0"]                    ; managing environment setting
-                 ;;[me.raynes/conch "0.5.0"]            ; shell
+                 [me.raynes/conch "0.5.0"]            ; shell
                  [me.raynes/fs "1.4.4"]               ; file system
                  ;;[cc.qbits/tardis "0.3.1"]            ; UUID
                  [crypto-random "1.1.0"]              ; crypto
@@ -56,6 +56,7 @@
                  [postgresql "9.1-901-1.jdbc4"]       ; PostgreSQL Driver
                  [org.clojure/java.jdbc "0.2.3"]      ; java jdbc
                  [korma "0.3.0-RC5"]                  ; DB
+                 [lobos "1.0.0-beta1"]                ; migrations
 
                  ;;[clojurewerkz/elastisch "1.1.0-rc1"] ; ElasticSearch
                  ;;[com.taoensso/carmine "1.7.0-beta2"] ; redis

@@ -1,6 +1,6 @@
-(defproject com.deftype.cljwtang-platform/cljwtang "0.1.0-SNAPSHOT"
+(defproject cljwtang "0.1.0-SNAPSHOT"
   :description "clojure web app libs"
-  :url "http://cljwtang.deftype.com"
+  :url "http://cljwtang.itang.me"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.5.1"]

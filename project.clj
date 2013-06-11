@@ -9,8 +9,8 @@
                  [org.clojure/core.incubator "0.1.2"]
                  [org.clojure/core.memoize "0.5.4"]
 
-                 [cljtang "0.1"]
-                 [clj-pretty-format "0.1"]
+                 [cljtang "0.1.1"]
+                 [clj-pretty-format "0.1.1"]
                  ;;[prismatic/plumbing "0.1.0"]
 
                  [commons-codec/commons-codec "1.6"]

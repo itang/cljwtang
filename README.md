@@ -10,7 +10,7 @@ local install
         $ cd cljwtang
         $ lein install
 
-To install clj-pretty-format, add the following dependency to your project.clj file:
+To install cljwtang, add the following dependency to your project.clj file:
 
         [cljwtang "0.1.0-SNAPSHOT"]
         

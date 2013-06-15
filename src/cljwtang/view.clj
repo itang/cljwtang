@@ -1,4 +1,4 @@
-(ns cljwtang.view  
+(ns cljwtang.view
   (:require [clojure.string :as str]
             [cljtang.core :refer :all]
             [clojure.tools.logging :refer [debug info]]

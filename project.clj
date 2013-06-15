@@ -50,7 +50,7 @@
                  [compojure "1.1.5"]                  ; web framework
                  [stencil "0.3.2"]                    ; mustache template
                  ;;[hbs "0.4.1"]                        ; handlebars template
-                 [lib-noir "0.6.1"]                   ; middleware
+                 [lib-noir "0.6.2"]                   ; middleware
 
                  [com.h2database/h2 "1.3.172"]        ; H2 Driver
                  [postgresql "9.1-901-1.jdbc4"]       ; PostgreSQL Driver

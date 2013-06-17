@@ -56,8 +56,8 @@
                  [postgresql "9.1-901-1.jdbc4"]       ; PostgreSQL Driver
                  [org.clojure/java.jdbc "0.2.3"]      ; java jdbc
                  [korma "0.3.0-RC5"]                  ; DB
-                 [lobos "1.0.0-beta1"]                ; migrations
-
+                 ;;[lobos "1.0.0-beta1"]                ; migrations
+                 [me.itang/lobos "1.0.0-beta1"]
                  ;;[clojurewerkz/elastisch "1.1.0-rc1"] ; ElasticSearch
                  ;;[com.taoensso/carmine "1.7.0-beta2"] ; redis
                  ;;[akka/akka-clojure "0.1.0"]          ; akka

@@ -4,6 +4,10 @@
             [noir.response :refer [json]]
             [environ.core :refer [env]]))
 
+(def ^{:doc "库版本信息"}
+  version
+  "cljwtang-0.1.0-SNAPSHOT")
+
 (defn env-config
   ([key] (env-config key nil))
   ([key default-value] (or (env key) default-value)))

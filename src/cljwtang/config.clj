@@ -9,10 +9,8 @@
 (defn hostname []
   (fn-app-config :platform.host "localhost"))
 
-(defn host []
-  (str (hostname) (when (= 80 server-port) (str ":" server-port))))
-
-(def hostaddr host)
+(defn hostaddr []
+  (str (hostname) (when (not= 80 server-port) (str ":" server-port))))
 
 (def ^{:doc "i18n 配置文件"}
   i18n-config-file "i18n-config.clj")

@@ -13,7 +13,7 @@
                  [clj-pretty-format "0.1.1"]
                  ;;[prismatic/plumbing "0.1.0"]
 
-                 [commons-codec/commons-codec "1.6"]
+                 [commons-codec/commons-codec "1.8"]
                  [com.lambdaworks/scrypt "1.4.0"]       ; scrypt
 
                  [coercer "0.2.0"]                    ; conv types
@@ -44,7 +44,7 @@
                  ;;[clj-http "0.6.4"]                   ; http client
                  ;;[com.novemberain/pantomime "1.7.0"]  ;MIME types
 
-                 [ring "1.2.0-beta3"]
+                 [ring "1.2.0-RC1"]
                  ;;[com.cemerick/friend "0.1.5"
                    ;;:exclusions [ring/ring-core]]      ; authentication
                  [compojure "1.1.5"]                  ; web framework

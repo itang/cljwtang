@@ -31,4 +31,4 @@
   (let [host (-> email (string/split #"@") second)]
     (when-not (empty? host)
       (or (get (config/mail-vendors-out-rule) host)
-        (str "mail." host)))))
+          (str "mail." host)))))

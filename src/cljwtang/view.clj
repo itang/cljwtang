@@ -1,13 +1,10 @@
 (ns cljwtang.view
   (:require [clojure.string :as str]
             [cljtang.core :refer :all]
-            [clojure.tools.logging :refer [debug info]]
-            [cheshire.core :as cheshire]
-            [noir.session :as session]
-            [taoensso.tower :refer [t] :as tower]
+            [taoensso.tower :as tower]
             [cljwtang.core :refer [run-mode prod-mode? dev-mode?]]
-            [cljwtang.view :refer :all]
             [cljwtang.config :as config]
+            [cljwtang.view :refer :all]
             [cljwtang.templates :refer [ render-file regist-tag]]
             [cljwtang.inject :as inject]))
 
@@ -19,7 +16,7 @@
 
 (def ^:private static-context
   {:mode run-mode
-   :host config/host
+   :host config/hostaddr
    :is-prod-mode prod-mode?
    :is-dev-mode dev-mode?})
 
@@ -41,7 +38,7 @@
 (defn- init []
   (regist-tag :with-js (with *more-js*))
   (regist-tag :with-css (with *more-css*))
-  (regist-tag :i18n #(t (keyword %)))
+  (regist-tag :i18n #(tower/t (keyword %)))
   (regist-tag :chan-active
               ^{:stencil/pass-context true}
               (fn [x ctx]

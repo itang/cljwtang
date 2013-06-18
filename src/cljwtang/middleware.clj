@@ -1,6 +1,6 @@
 (ns cljwtang.middleware
   (:require [clojure.string :as str]
-            [clojure.tools.logging :refer [info]]
+            [clojure.tools.logging :as log]
             [noir.response :refer [set-headers]]
             [cljwtang.core :refer :all]
             [cljwtang.view :refer :all]
@@ -31,10 +31,10 @@
                  name
                  str/upper-case)
         req-info (str method " " uri)]
-    (info req-info)
+    (log/info req-info)
     (let [reps (handler request)
           status (:status reps)]
-      (info req-info "->" status)
+      (log/info req-info "->" status)
       reps)))
 
 (defn wrap-request-log [handler]

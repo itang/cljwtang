@@ -1,6 +1,6 @@
 (ns cljwtang.inject
-  (:require [korma.db :refer [defdb h2]]
-            [cljtang.core :refer :all]
+  (:require [cljtang.core :refer :all]
+            [korma.db :refer [defdb h2]]
             [cljwtang.core :refer [env-config]]
             [cljwtang.templates :as templates]))
 

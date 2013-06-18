@@ -1,8 +1,7 @@
 (ns cljwtang.impls.stencil
-  (:require
-    [stencil.core :as stencil]
-    [stencil.loader :as stencil-loader]
-    [cljwtang.datatype :refer [TemplateEngine]]))
+  (:require [stencil.core :as stencil]
+            [stencil.loader :as stencil-loader]
+            [cljwtang.datatype :refer [TemplateEngine]]))
 
 (deftype StencilTemplateEngine
   [the-name tags-map template-path-prefix template-path-suffix]

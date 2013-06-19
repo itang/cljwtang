@@ -6,8 +6,8 @@
   :dependencies [[org.clojure/clojure "1.5.1"]
 
                  ;;[org.clojure/clojurescript "0.0-1586"]
-                 [org.clojure/core.incubator "0.1.2"]
-                 [org.clojure/core.memoize "0.5.4"]
+                 [org.clojure/core.incubator "0.1.3"]
+                 [org.clojure/core.memoize "0.5.5"]
 
                  [cljtang "0.1.1"]
                  [clj-pretty-format "0.1.1"]

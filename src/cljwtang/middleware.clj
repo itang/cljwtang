@@ -31,7 +31,6 @@
                  name
                  str/upper-case)
         req-info (str method " " uri)]
-    (log/info req-info)
     (let [reps (handler request)
           status (:status reps)]
       (log/info req-info "->" status)

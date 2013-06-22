@@ -1,8 +1,8 @@
 (ns cljwtang.server
   (:refer-clojure :exclude [name sort])
   (:require [clojure.java.io :as io]
-            [cljtang.core :refer :all]
             [clojure.tools.logging :as log]
+            [cljtang.core :refer :all]
             [compojure.core :refer :all]
             [compojure.handler :as handler]
             [compojure.route :as route]

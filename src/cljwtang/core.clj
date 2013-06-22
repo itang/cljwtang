@@ -3,18 +3,18 @@
             [noir.session :as session]
             [noir.response :refer [json]]
             [cljwtang.inject :as inject]
-            [cljwtang.template.core :as template]))
+            [cljwtang.template.core :as template]
+            [cljwtang.utils.env :as env]))
 
 (def ^{:doc "库版本信息"}
   version "cljwtang-0.1.0-SNAPSHOT")
 
-;; hold just for compatibility
-(def ^{:doc "获取环境配置"}
-  env-config inject/fn-app-config)
+(def ^{:doc "获取应用配置"}
+  app-config inject/fn-app-config)
 
 (def ^{:doc "应用运行模式(开发或生产)"}
   run-mode
-  (if (or (env-config :wapp-no-dev) (env-config :lein-no-dev))
+  (if (or (env/env-config :wapp-no-dev) (env/env-config :lein-no-dev))
     "prod"
     "dev"))
 
@@ -24,7 +24,9 @@
 (def ^{:doc "应用是在开发模式下运行?"}
   dev-mode? (= run-mode "dev"))
 
-(defn message [success pmessage data & [detailMessage ptype]]
+(defn message
+  "消息map"
+  [success pmessage data & [detailMessage ptype]]
   (let [pmessage (or pmessage "")
         data (or data {})
         detailMessage (or detailMessage "")
@@ -35,34 +37,48 @@
      :detailMessage detailMessage
      :type ptype}))
 
-(def json-message (comp json message))
+(def ^{:doc "消息map -> JSON"}
+  json-message (comp json message))
 
-(defn success-message [pmessage & [data detailMessage]]
+(defn success-message
+  "success消息map"
+  [pmessage & [data detailMessage]]
   (message true pmessage data detailMessage))
 
-(def json-success-message (comp json success-message))
+(def ^{:doc "success消息map -> JSON"}
+  json-success-message (comp json success-message))
 
-(defn failture-message [pmessage & [data detailMessage]]
+(defn failture-message
+  "failture消息map"
+  [pmessage & [data detailMessage]]
   (message false pmessage data detailMessage))
 
-(def json-failture-message (comp json failture-message))
+(def ^{:doc "failture消息map -> JSON"}
+  json-failture-message (comp json failture-message))
 
-(def error-message failture-message)
+(def ^{:doc "error消息map"}
+  error-message failture-message)
 
-(def json-error-message (comp json error-message))
+(def ^{:doc "error消息map -> JSON"}
+  json-error-message (comp json error-message))
 
-(defn info-message [pmessage & [data detailMessage]]
+(defn info-message
+  "info消息map"
+  [pmessage & [data detailMessage]]
   (message true pmessage data detailMessage :info))
 
-(def json-info-message (comp json info-message))
+(def ^{:doc "info消息map -> JSON"}
+  json-info-message (comp json info-message))
 
 (defn flash-msg
-  ([] 
+  "获取或设置flash msg"
+  ([]
     (session/flash-get :msg))
   ([msg]
     (session/flash-put! :msg msg)))
 
 (defn flash-post-params
+  "获取或设置flash post params"
   ([] 
     (session/flash-get :post-params))
   ([msg]
@@ -110,14 +126,22 @@
      (with-validates ~validates-fn ~success ~failture)))
 
 ;;; for template
-(defn render-string [template data]
+(defn render-string
+  "render template from string"
+  [template data]
   (template/render-string inject/*template-engine* template data))
 
-(defn render-file [template-name data]
+(defn render-file
+  "render template form file"
+  [template-name data]
   (template/render-file inject/*template-engine* template-name data))
 
-(defn regist-tag [k v]
+(defn regist-tag
+  "regist tags"
+  [k v]
   (template/regist-tag inject/*template-engine* k v))
 
-(defn clear-template-cache! []
+(defn clear-template-cache!
+  "clear template's cache"
+  []
   (template/clear-cache! inject/*template-engine*))

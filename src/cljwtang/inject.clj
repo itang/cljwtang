@@ -1,8 +1,9 @@
 (ns cljwtang.inject
   (:require [cljtang.core :refer :all]
             [korma.db :refer [defdb h2]]
-            [cljwtang.core :refer [env-config]]
-            [cljwtang.templates :as templates]))
+            [cljwtang.utils.env :refer [env-config]]
+            [cljwtang.template.core :as template]
+            [cljwtang.template.stencil :as stencil]))
 
 (defonce ^:dynamic fn-app-config env-config)
 
@@ -18,6 +19,9 @@
   (h2 {:subname "~/cljwtang_dev;AUTO_SERVER=TRUE"
        :user "sa"
        :password ""}))
+
+(defonce ^:dynamic *template-engine*
+  (stencil/new-stencil-template-engine))
 
 (defonce ^:dynamic not-found-content "Not Found")
 
@@ -35,7 +39,7 @@
     (flatten)
     (apply hash-map))]
   (doseq [[k v] helpers]
-    (templates/regist-tag k v))))
+    (template/regist-tag *template-engine* k v))))
 
 (defn- inject-var [v new-value]
   (alter-var-root v (constantly new-value)))
@@ -64,3 +68,6 @@
 
 (defn inject-not-found-content [content]
   (inject-var #'not-found-content content))
+
+(defn alter-template-engine! [template-engine]
+  (inject-var (var *template-engine*) template-engine))

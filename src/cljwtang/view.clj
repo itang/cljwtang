@@ -2,11 +2,9 @@
   (:require [clojure.string :as str]
             [cljtang.core :refer :all]
             [taoensso.tower :as tower]
-            [cljwtang.core :refer [run-mode prod-mode? dev-mode?]]
-            [cljwtang.config :as config]
-            [cljwtang.view :refer :all]
-            [cljwtang.templates :refer [ render-file regist-tag]]
-            [cljwtang.inject :as inject]))
+            [cljwtang.inject :as inject]
+            [cljwtang.core :refer :all]
+            [cljwtang.config :as config]))
 
 (def ^:private more-default "")
 

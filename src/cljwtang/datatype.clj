@@ -17,13 +17,6 @@
   (bootstrap-tasks [this] "系统启动时任务")
   (contollers [this] "客户端Controllers"))
 
-(defprotocol TemplateEngine
-  (-name [this] "name")
-  (-render-string [this template data] "render string")
-  (-render-file [this template-name data] "render file")
-  (-regist-tag [this k v] "add helper")
-  (-clear-cache! [this] "clear cache"))
-
 (defn- nil->empty [coll]
   (nil-> coll []))
 

@@ -2,9 +2,8 @@
   (:require [clojure.string :as str]
             [clojure.tools.logging :as log]
             [noir.response :refer [set-headers]]
-            [cljwtang.core :refer :all]
+            [cljwtang.core :refer :all :as cljwtang]
             [cljwtang.view :refer :all]
-            [cljwtang.templates :as templates]
             [cljwtang.request :refer [ajax?]]))
 
 (defn- static-resource-request? [request]
@@ -15,7 +14,7 @@
 (defn wrap-templates-refresh [handler]
   (fn [request]
     (when-not (static-resource-request? request)
-      (templates/clear-template-cache!))
+      (cljwtang/clear-template-cache!))
     (handler request)))
 
 (defn wrap-view [handler]

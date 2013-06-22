@@ -2,15 +2,15 @@
   (:require [noir.request :refer [*request*]]
             [noir.session :as session]
             [noir.response :refer [json]]
-            [environ.core :refer [env]]))
+            [cljwtang.inject :as inject]
+            [cljwtang.template.core :as template]))
 
 (def ^{:doc "库版本信息"}
-  version
-  "cljwtang-0.1.0-SNAPSHOT")
+  version "cljwtang-0.1.0-SNAPSHOT")
 
-(defn env-config
-  ([key] (env-config key nil))
-  ([key default-value] (or (env key) default-value)))
+;; hold just for compatibility
+(def ^{:doc "获取环境配置"}
+  env-config inject/fn-app-config)
 
 (def ^{:doc "应用运行模式(开发或生产)"}
   run-mode
@@ -108,3 +108,16 @@
          #(throw (Exception. "validate error"))}}]
   `(defhandler ~handler [~@args]
      (with-validates ~validates-fn ~success ~failture)))
+
+;;; for template
+(defn render-string [template data]
+  (template/render-string inject/*template-engine* template data))
+
+(defn render-file [template-name data]
+  (template/render-file inject/*template-engine* template-name data))
+
+(defn regist-tag [k v]
+  (template/regist-tag inject/*template-engine* k v))
+
+(defn clear-template-cache! []
+  (template/clear-cache! inject/*template-engine*))

@@ -1,22 +1,22 @@
-(ns cljwtang.impls.stencil
+(ns cljwtang.template.stencil
   (:require [stencil.core :as stencil]
             [stencil.loader :as stencil-loader]
-            [cljwtang.datatype :refer [TemplateEngine]]))
+            [cljwtang.template.core :refer [TemplateEngine]]))
 
 (deftype StencilTemplateEngine
   [the-name tags-map template-path-prefix template-path-suffix]
   TemplateEngine
-  (-name [_]
+  (name [_]
     the-name)
-  (-render-string [_ template data]
+  (render-string [_ template data]
     (stencil/render-string template (merge @tags-map data)))
-  (-render-file [_ template-name data]
+  (render-file [_ template-name data]
     (stencil/render-file 
       (str template-path-prefix template-name template-path-suffix)
       (merge @tags-map data)))
-  (-regist-tag [_ k v]
+  (regist-tag [_ k v]
     (swap! tags-map assoc k v))
-  (-clear-cache! [_]
+  (clear-cache! [_]
     (stencil-loader/invalidate-cache)))
 
 (defn new-stencil-template-engine []

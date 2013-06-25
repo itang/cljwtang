@@ -8,7 +8,7 @@
                  ;;[org.clojure/clojurescript "0.0-1586"]
                  [org.clojure/core.incubator "0.1.3"]
                  [org.clojure/core.memoize "0.5.5"]
-                 [org.clojure/core.match "0.2.0-rc1"]
+                 [org.clojure/core.match "0.2.0-rc2"]
 
                  [cljtang "0.1.1"]
                  [clj-pretty-format "0.1.1"]
@@ -19,8 +19,8 @@
 
                  [coercer "0.2.0"]                    ; conv types
                  [environ "0.4.0"]                    ; managing environment setting
-                 [me.raynes/conch "0.5.0"]            ; shell
-                 [me.raynes/fs "1.4.4"]               ; file system
+                 [me.raynes/conch "0.5.1"]            ; shell
+                 [me.raynes/fs "1.4.5"]               ; file system
                  ;;[cc.qbits/tardis "0.3.1"]            ; UUID
                  [crypto-random "1.1.0"]              ; crypto
                  ;;[clj-time "0.5.0"]                   ; date time
@@ -64,9 +64,9 @@
                  ;;[akka/akka-clojure "0.1.0"]          ; akka
                  ;;[co.paralleluniverse/pulsar "0.1.1"] ; Pulsar
 
-                 [http-kit "2.1.3"]
+                 [http-kit "2.1.4"]
 
-                 [jayq "2.3.0"]                       ; jQuery wrapper
+                 [jayq "2.4.0"]                       ; jQuery wrapper
                  ;;[prismatic/dommy "0.0.2"]            ; CS Template
                  [cljstang "0.1"]
                  ]

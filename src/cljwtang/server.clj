@@ -10,7 +10,8 @@
             [noir.response :refer [json status]]
             [taoensso.tower :refer [t set-config!] :as tower]
             [taoensso.tower.ring :refer [wrap-i18n-middleware]]
-            [org.httpkit.server :as httpkit])
+            [org.httpkit.server :as httpkit]
+            [clojure.tools.nrepl.server :as nrepl-server])
   (:require [cljwtang.core :refer :all :as cljwtang]
             [cljwtang.inject :as inject]
             [cljwtang.view :refer :all]
@@ -95,6 +96,12 @@
     (load-i18n-dictionary)
     (log/info "Run bootstrap tasks...")
     (run-bootstrap-tasks)
+    (log/info "start-nrepl-server? " config/start-nrepl-server?)
+    (when config/start-nrepl-server?
+       (defonce nrepl-server
+         (nrepl-server/start-server :port config/nrepl-server-port))
+       (log/info (str "use lein to connect nrepl server: lein repl :connect "
+                      config/nrepl-server-port)))
     (log/info ">>Server start! Run mode: " run-mode)))
 
 (defn start-server

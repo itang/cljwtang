@@ -1,10 +1,19 @@
 (ns cljwtang.config
   (:require [me.raynes.fs :refer [file home exists? mkdirs]]
             [cljwtang.core :refer [app-config]]
-            [cljwtang.utils.env :refer [env-config]]))
+            [cljwtang.utils.env :as env]))
 
 (def ^{:doc "web服务端口"}
-  server-port (or (env-config :wapp-server-port) 3000))
+  server-port
+  (env/env-config-int :cljwtang-server-port "3000"))
+
+(def ^{:doc "start nrepl server"}
+  start-nrepl-server?
+  (env/env-config-bool :cljwtang-start-nrepl-server "false"))
+
+(def ^{:doc "nrepl server port"}
+  nrepl-server-port
+  (env/env-config-int :cljwtang-nrepl-server-port "7888"))
 
 (defn hostname
   "主机名"

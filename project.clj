@@ -9,6 +9,7 @@
                  [org.clojure/core.incubator "0.1.3"]
                  [org.clojure/core.memoize "0.5.5"]
                  [org.clojure/core.match "0.2.0-rc2"]
+                 [org.clojure/tools.nrepl "0.2.3"]
 
                  [cljtang "0.1.1"]
                  [clj-pretty-format "0.1.1"]

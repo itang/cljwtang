@@ -54,10 +54,9 @@
 (defn appdata-dir
   "应用存放数据的目录"
   []
-  (let [root-dir (home) ;;TODO 可配置
-        base-dir (str "cljwtang-data")
-        data-dir (.getAbsolutePath ^java.io.File (file root-dir base-dir))
-        data-dir (app-config :platform.appdata-dir data-dir)]
+  (let [file-path #(.getAbsolutePath ^java.io.File %)
+        data-dir (app-config :platform.appdata-dir
+                             (file-path (file (home) "cljwtang-data")))]
     (when-not (exists? data-dir)
       (mkdirs data-dir))
     data-dir))

@@ -33,7 +33,7 @@
   []
   (app-config :platform.mail-server
                  {:host "smtp.exmail.qq.com"
-                  :port 465 
+                  :port 465
                   :user "support@traup.com"
                   :pass "traup_2012"
                   :ssl :yes}))
@@ -56,7 +56,7 @@
   []
   (let [file-path #(.getAbsolutePath ^java.io.File %)
         data-dir (app-config :platform.appdata-dir
-                             (file-path (file (home) "cljwtang-data")))]
+                             (file-path (file (home) ".cljwtang/data")))]
     (when-not (exists? data-dir)
       (mkdirs data-dir))
     data-dir))

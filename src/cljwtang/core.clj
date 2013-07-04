@@ -26,14 +26,14 @@
 
 (defn message
   "消息map"
-  [success pmessage data & [detailMessage ptype]]
+  [success pmessage & [data detailMessage ptype]]
   (let [pmessage (or pmessage "")
         data (or data {})
         detailMessage (or detailMessage "")
         ptype (or ptype (if success :success :error))]
     {:success success
      :message pmessage
-     :data data 
+     :data data
      :detailMessage detailMessage
      :type ptype}))
 
@@ -79,7 +79,7 @@
 
 (defn flash-post-params
   "获取或设置flash post params"
-  ([] 
+  ([]
     (session/flash-get :post-params))
   ([msg]
     (session/flash-put! :post-params msg)))
@@ -96,7 +96,7 @@
      (let [{:keys ~args :or {~'req ~'req}} (:params ~'req)]
        ~@body)))
 
-;;;; validate fn 规范 
+;;;; validate fn 规范
 ;;;;  (validate-fn (:params *request*)) => {:user ["error1"]}
 (defmacro with-validates [validates-fn success failture]
   `(let [~'find (atom  false)
@@ -119,7 +119,7 @@
 
 (defmacro defhandler-with-validates
   [handler args validates-fn &
-   {:keys [success failture] 
+   {:keys [success failture]
     :or {failture
          #(throw (Exception. "validate error"))}}]
   `(defhandler ~handler [~@args]

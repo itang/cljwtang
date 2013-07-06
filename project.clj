@@ -8,7 +8,7 @@
 
                  ;;[org.clojure/clojurescript "0.0-1586"]
                  [org.clojure/core.incubator "0.1.3"]
-                 [org.clojure/core.memoize "0.5.5"]
+                 [org.clojure/core.memoize "0.5.6"]
                  [org.clojure/core.match "0.2.0-rc2"]
                  [org.clojure/tools.nrepl "0.2.3"]
 
@@ -31,7 +31,7 @@
 
                  ;;[sonian/carica "1.0.2"]              ; config
                  [cheshire "5.2.0"]                   ; JSON
-                 [com.draines/postal "1.10.3"]         ; email
+                 [com.draines/postal "1.10.4"]         ; email
                  [com.taoensso/tower "1.7.1"]         ; i18n
 
                  [org.clojure/tools.logging "0.2.6"]  ; logging
@@ -49,11 +49,11 @@
 
                  [ring "1.2.0-RC1"]
                  ;;[com.cemerick/friend "0.1.5"
-                   ;;:exclusions [ring/ring-core]]      ; authentication
+                 ;;:exclusions [ring/ring-core]]      ; authentication
                  [compojure "1.1.5"]                  ; web framework
                  [stencil "0.3.2"]                    ; mustache template
                  ;;[hbs "0.4.1"]                        ; handlebars template
-                 [lib-noir "0.6.4"]                   ; middleware
+                 [lib-noir "0.6.5"]                   ; middleware
 
                  [com.h2database/h2 "1.3.172"]        ; H2 Driver
                  [postgresql "9.1-901-1.jdbc4"]       ; PostgreSQL Driver
@@ -61,21 +61,21 @@
                  [korma "0.3.0-RC5"]                  ; DB
                  ;;[lobos "1.0.0-beta1"]                ; migrations
                  [me.itang/lobos "1.0.0-beta1"]
+
                  ;;[clojurewerkz/elastisch "1.1.0-rc1"] ; ElasticSearch
                  ;;[com.taoensso/carmine "1.7.0-beta2"] ; redis
                  ;;[akka/akka-clojure "0.1.0"]          ; akka
                  ;;[co.paralleluniverse/pulsar "0.1.1"] ; Pulsar
 
-                 [http-kit "2.1.4"]
+                 [http-kit "2.1.5"]
 
                  [jayq "2.4.0"]                       ; jQuery wrapper
                  ;;[prismatic/dommy "0.0.2"]            ; CS Template
-                 [cljstang "0.1"]
-                 ]
+                 [cljstang "0.1"]]
   :repositories {"sonatype-oss-public" "https://oss.sonatype.org/content/groups/public/"}
   :profiles {:dev {:plugins [[codox "0.6.4"]
                              [lein-pprint "1.1.1"]
-                             [lein-outdated "1.0.1"]
+                             [lein-ancient "0.4.2"] ; lein ancient
                              [lein-checkall "0.1.1"]]}
              :1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}
              :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}}

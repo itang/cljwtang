@@ -1,5 +1,6 @@
 (ns cljwtang.utils.mail
-  (:require [clojure.string :as string]
+  (:require [clojure.core.async :refer [go]]
+            [clojure.string :as string]
             [cljtang.core :refer :all]
             [postal.core :as postal]
             [cljwtang.view :refer [template]]
@@ -14,7 +15,7 @@
               (assoc msg :from (:user (config/mail-server)))
               msg)]
     (if async?
-      (future (f msg))
+      (go (f msg))
       (f msg))))
 
 (defn send-mail-by-template

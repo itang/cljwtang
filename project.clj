@@ -47,7 +47,7 @@
                  ;;[clj-http "0.6.4"]                   ; http client
                  ;;[com.novemberain/pantomime "1.7.0"]  ;MIME types
 
-                 [ring "1.2.0-RC1"]
+                 [ring "1.2.0"]
                  ;;[com.cemerick/friend "0.1.5"
                  ;;:exclusions [ring/ring-core]]      ; authentication
                  [compojure "1.1.5"]                  ; web framework

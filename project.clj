@@ -53,7 +53,7 @@
                  [compojure "1.1.5"]                  ; web framework
                  [stencil "0.3.2"]                    ; mustache template
                  ;;[hbs "0.4.1"]                        ; handlebars template
-                 [lib-noir "0.6.5"]                   ; middleware
+                 [lib-noir "0.6.6"]                   ; middleware
 
                  [com.h2database/h2 "1.3.172"]        ; H2 Driver
                  [postgresql "9.1-901-1.jdbc4"]       ; PostgreSQL Driver
@@ -67,7 +67,7 @@
                  ;;[akka/akka-clojure "0.1.0"]          ; akka
                  ;;[co.paralleluniverse/pulsar "0.1.1"] ; Pulsar
 
-                 [http-kit "2.1.5"]
+l                 [http-kit "2.1.7"]
 
                  [jayq "2.4.0"]                       ; jQuery wrapper
                  ;;[prismatic/dommy "0.0.2"]            ; CS Template

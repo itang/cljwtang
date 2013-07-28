@@ -9,7 +9,7 @@
                  ;;[org.clojure/clojurescript "0.0-1586"]
                  [org.clojure/core.incubator "0.1.3"]
                  [org.clojure/core.memoize "0.5.6"]
-                 [org.clojure/core.match "0.2.0-rc2"]
+                 [org.clojure/core.match "0.2.0-rc5"]
                  [org.clojure/tools.nrepl "0.2.3"]
 
                  [cljtang "0.1.1"]
@@ -67,7 +67,7 @@
                  ;;[akka/akka-clojure "0.1.0"]          ; akka
                  ;;[co.paralleluniverse/pulsar "0.1.1"] ; Pulsar
 
-l                 [http-kit "2.1.7"]
+                 [http-kit "2.1.8"]
 
                  [jayq "2.4.0"]                       ; jQuery wrapper
                  ;;[prismatic/dommy "0.0.2"]            ; CS Template

@@ -75,7 +75,7 @@
   :repositories {"sonatype-oss-public" "https://oss.sonatype.org/content/groups/public/"}
   :profiles {:dev {:plugins [[codox "0.6.4"]
                              [lein-pprint "1.1.1"]
-                             [lein-ancient "0.4.2"] ; lein ancient
+                             [lein-ancient "0.4.3"] ; lein ancient
                              [lein-checkall "0.1.1"]]}
              :1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}
              :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}}

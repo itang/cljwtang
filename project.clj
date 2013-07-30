@@ -55,7 +55,7 @@
                  ;;[hbs "0.4.1"]                        ; handlebars template
                  [lib-noir "0.6.6"]                   ; middleware
 
-                 [com.h2database/h2 "1.3.172"]        ; H2 Driver
+                 [com.h2database/h2 "1.3.173"]        ; H2 Driver
                  [postgresql "9.1-901-1.jdbc4"]       ; PostgreSQL Driver
                  [org.clojure/java.jdbc "0.2.3"]      ; java jdbc
                  [korma "0.3.0-RC5"]                  ; DB
@@ -75,7 +75,7 @@
   :repositories {"sonatype-oss-public" "https://oss.sonatype.org/content/groups/public/"}
   :profiles {:dev {:plugins [[codox "0.6.4"]
                              [lein-pprint "1.1.1"]
-                             [lein-ancient "0.4.3"] ; lein ancient
+                             [lein-ancient "0.4.4"] ; lein ancient
                              [lein-checkall "0.1.1"]]}
              :1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}
              :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}}

@@ -31,7 +31,7 @@
 
                  ;;[sonian/carica "1.0.2"]              ; config
                  [cheshire "5.2.0"]                   ; JSON
-                 [com.draines/postal "1.10.4"]         ; email
+                 [com.draines/postal "1.11.0"]         ; email
                  [com.taoensso/tower "1.7.1"]         ; i18n
 
                  [org.clojure/tools.logging "0.2.6"]  ; logging
@@ -53,7 +53,7 @@
                  [compojure "1.1.5"]                  ; web framework
                  [stencil "0.3.2"]                    ; mustache template
                  ;;[hbs "0.4.1"]                        ; handlebars template
-                 [lib-noir "0.6.6"]                   ; middleware
+                 [lib-noir "0.6.8"]                   ; middleware
 
                  [com.h2database/h2 "1.3.173"]        ; H2 Driver
                  [postgresql "9.1-901-1.jdbc4"]       ; PostgreSQL Driver

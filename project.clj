@@ -67,7 +67,7 @@
                  ;;[akka/akka-clojure "0.1.0"]          ; akka
                  ;;[co.paralleluniverse/pulsar "0.1.1"] ; Pulsar
 
-                 [http-kit "2.1.8"]
+                 [http-kit "2.1.9"]
 
                  [jayq "2.4.0"]                       ; jQuery wrapper
                  ;;[prismatic/dommy "0.0.2"]            ; CS Template

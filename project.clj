@@ -12,7 +12,7 @@
                  [org.clojure/core.match "0.2.0-rc5"]
                  [org.clojure/tools.nrepl "0.2.3"]
 
-                 [cljtang "0.1.1"]
+                 [cljtang "0.1.2-SNAPSHOT"]
                  [clj-pretty-format "0.1.1"]
                  ;;[prismatic/plumbing "0.1.0"]
 

@@ -13,14 +13,16 @@
   (render-file [_ template-name data]
     (parser/render-file
      (str template-path-prefix template-name template-path-suffix) data))
-  (regist-tag [_ k v]
-    (println (keyword (str "end" (name k))))
-    (parser/add-tag! k v (keyword (str "end-" (name k)))))
+  (regist-helper [_ k v]
+    (println "H:" k)
+    (parser/add-tag! k v))
+  (regist-tag [_ k v m]
+    (println "T:" k)
+    (parser/add-tag! k v m))
   (regist-filter [_ k v]
     (filters/add-filter! k v))
   (clear-cache! [_]))
 
 (defn new-selmer-template-engine []
-  #_(parser/set-resource-path! "/var/html/templates/")
-  (parser/add-tag! :withcss (fn [a1 a2 a3] "<h1>css</h2>") :endwithcss)
-  (SelmerTemplateEngine. "Selmer" "templates/" ".sm.html"))
+  (filters/add-filter! :empty? empty?)
+  (SelmerTemplateEngine. :selmer "templates/" ".sm.html"))

@@ -3,7 +3,7 @@
             [korma.db :refer [defdb h2]]
             [cljwtang.utils.env :refer [env-config]]
             [cljwtang.template.core :as template]
-            [cljwtang.template.stencil :as stencil]))
+            [cljwtang.template.selmer :as selmer]))
 
 (defonce ^:dynamic fn-app-config env-config)
 
@@ -21,7 +21,7 @@
        :password ""}))
 
 (defonce ^:dynamic *template-engine*
-  (stencil/new-stencil-template-engine))
+  (selmer/new-selmer-template-engine))
 
 (defonce ^:dynamic not-found-content "Not Found")
 
@@ -39,7 +39,7 @@
     (flatten)
     (apply hash-map))]
   (doseq [[k v] helpers]
-    (template/regist-tag *template-engine* k v))))
+    (template/regist-helper *template-engine* k v))))
 
 (defn- inject-var [v new-value]
   (alter-var-root v (constantly new-value)))

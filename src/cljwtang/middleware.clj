@@ -17,13 +17,6 @@
       (cljwtang/clear-template-cache!))
     (handler request)))
 
-(defn wrap-view [handler]
-  (fn [req]
-    (if (ajax? req)
-      (handler req)
-      (binding [*more-js* nil *more-css* nil]
-        (handler req)))))
-
 (defn- handle-with-log [handler request]
   (let [uri (:uri request)
         method (-> (:request-method request)

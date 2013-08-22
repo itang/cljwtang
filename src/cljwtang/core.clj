@@ -136,10 +136,20 @@
   [template-name data]
   (template/render-file inject/*template-engine* template-name data))
 
+(defn regist-helper
+  "regist helper"
+  [k v]
+  (template/regist-helper inject/*template-engine* k v))
+
 (defn regist-tag
   "regist tags"
   [k v]
-  (template/regist-tag inject/*template-engine* k v))
+  (template/regist-tag inject/*template-engine* k v (->> k name (str "end-") keyword)))
+
+(defn template-engine-name
+  "template-engine name"
+  []
+  (template/name inject/*template-engine*))
 
 (defn clear-template-cache!
   "clear template's cache"

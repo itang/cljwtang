@@ -14,11 +14,13 @@
     (stencil/render-file 
       (str template-path-prefix template-name template-path-suffix)
       (merge @tags-map data)))
-  (regist-tag [_ k v]
+  (regist-helper [_ k v]
+    (swap! tags-map assoc k v))
+  (regist-tag [this k v _]
     (swap! tags-map assoc k v))
   (regist-filter [_ k v] )
   (clear-cache! [_]
     (stencil-loader/invalidate-cache)))
 
 (defn new-stencil-template-engine []
-  (StencilTemplateEngine. "stencil" (atom {}) "templates/" ".html"))
+  (StencilTemplateEngine. :stencil (atom {}) "templates/" ".html"))

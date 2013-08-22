@@ -42,7 +42,7 @@
            :exception-info exception-info})))
     (if (ajax? req)
       (status 500 (json (error-message msg nil exception-info)))
-      (status 500 (html (view/layout-view
+      (status 500 (html (view/view
                           "common/500"
                           {:detail-message exception-info}
                           {:title msg}))))))
@@ -55,7 +55,6 @@
 
 (def ^:private intern-app
   (-> app-routes
-    (middlewares/wrap-view)
     (middlewares/wrap-exception-handling exception-handle)
     (wrap-i18n-middleware)))
 

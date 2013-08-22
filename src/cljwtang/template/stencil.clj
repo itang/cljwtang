@@ -16,6 +16,7 @@
       (merge @tags-map data)))
   (regist-tag [_ k v]
     (swap! tags-map assoc k v))
+  (regist-filter [_ k v] )
   (clear-cache! [_]
     (stencil-loader/invalidate-cache)))
 

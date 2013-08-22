@@ -1,16 +1,24 @@
 (ns cljwtang.view
+  (:refer-clojure :exclude [name])
   (:require [clojure.string :as str]
             [cljtang.core :refer :all]
             [taoensso.tower :as tower]
             [cljwtang.inject :as inject]
             [cljwtang.core :refer :all]
-            [cljwtang.config :as config]))
+            [cljwtang.config :as config]
+            [cljwtang.template.core :refer [name]]))
 
 (def ^:private more-default "")
 
 (def ^:dynamic *more-js* more-default)
 
 (def ^:dynamic *more-css* more-default)
+
+(def _s (name inject/*template-engine*))
+(defn selmer? []
+  (= "Selmer" _s))
+
+(println "selmer?" (selmer?))
 
 (def ^:private static-context
   {:mode run-mode
@@ -26,14 +34,15 @@
     line))
 
 (defmacro ^:private with [v]
-  `(fn [src#] 
-     (when (not= ~v more-default) ;; has binding
-       (set! ~v (append-line ~v src#)) nil)))
+    `(fn [src#] 
+       (when (not= ~v more-default) ;; has binding
+         (set! ~v (append-line ~v src#)) nil)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init
 
 (defn- init []
+  (println "view init ...")
   (regist-tag :with-js (with *more-js*))
   (regist-tag :with-css (with *more-css*))
   (regist-tag :i18n #(tower/t (keyword %)))
@@ -76,17 +85,21 @@
 (defn- view-context []
   {:logined (inject/fn-user-logined?)
    :more-js *more-js*
+   :morejs *more-js*
+   :morecss *more-css*
    :more-css *more-css*})
 
 (defn view-template [tpl-name & [ctx]]
   (template tpl-name (merge (view-context) ctx)))
 
 (defn- with-layout [layout-name body & [head]]
-  (view-template
-    (str "layouts/" layout-name)
-    {:title (or (:title head)
-                (inject/fn-app-config :platform.name "Clojure Web Platform"))
-     :content body}))
+  (if (selmer?)
+    body
+    (view-template
+      (str "layouts/" layout-name)
+      {:title (or (:title head)
+                  (inject/fn-app-config :platform.name "Clojure Web Platform"))
+       :content body})))
 
 (defn layout [body & [head]]
   (with-layout "layout-main" body head))

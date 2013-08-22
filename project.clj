@@ -52,6 +52,7 @@
                  ;;:exclusions [ring/ring-core]]      ; authentication
                  [compojure "1.1.5"]                  ; web framework
                  [stencil "0.3.2"]                    ; mustache template
+                 [selmer "0.4.0"]                     ; A fast, Django inspired
                  ;;[hbs "0.4.1"]                        ; handlebars template
                  [lib-noir "0.6.8"]                   ; middleware
 
@@ -67,7 +68,7 @@
                  ;;[akka/akka-clojure "0.1.0"]          ; akka
                  ;;[co.paralleluniverse/pulsar "0.1.1"] ; Pulsar
 
-                 [http-kit "2.1.9"]
+                 [http-kit "2.1.10"]
 
                  [jayq "2.4.0"]                       ; jQuery wrapper
                  ;;[prismatic/dommy "0.0.2"]            ; CS Template

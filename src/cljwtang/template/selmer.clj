@@ -1,6 +1,7 @@
 (ns cljwtang.template.selmer
   (:require [selmer.parser :as parser]
             [selmer.filters :as filters]
+            [clj-pretty-format.core :refer [pretty-format]]
             [cljwtang.template.core :refer [TemplateEngine]]))
 
 (deftype SelmerTemplateEngine
@@ -23,4 +24,5 @@
 
 (defn new-selmer-template-engine []
   (filters/add-filter! :empty? empty?)
+  (filters/add-filter! :date-pretty pretty-format)
   (SelmerTemplateEngine. :selmer "templates/" ".html"))

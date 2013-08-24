@@ -8,15 +8,15 @@
             [cljwtang.config :as config]
             [cljwtang.template.core :refer [name]]))
 
-(def _s (name inject/*template-engine*))
-(defn selmer? []
-  (= :selmer _s))
+(def ^:private te-name (name inject/*template-engine*))
+(defn- selmer? []
+  (= :selmer te-name))
 
 (def ^:private static-context
-  {:mode run-mode
-   :host config/hostaddr
-   :is-prod-mode prod-mode?
-   :is-dev-mode dev-mode?})
+  {:mode config/run-mode
+   :host (config/hostaddr)
+   :is-prod-mode config/prod-mode?
+   :is-dev-mode config/dev-mode?})
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; init
@@ -38,6 +38,15 @@
 (defn template [tpl-name & [ctx]]
   (render-file tpl-name (merge static-context ctx)))
 
+;;; view
+
+(defn- view-context []
+  {:logined (inject/fn-user-logined?)
+   :title (inject/fn-app-config :platform.name "Clojure Web Platform")})
+
+(defn view [tpl-name & [ctx]]
+  (template tpl-name (merge (view-context) ctx)))
+
 ;; pathname 可以是sym或string
 ;; pathname "main/test", 对应snippetname是 main-test, 全名是snippet-main-test
 ;; 隐含变量 ctx
@@ -56,12 +65,3 @@
          (when-let [~'ctx ~condition]
            (println ~path)
            (template (str "snippets/" ~path) ~context)))))
-
-;;; view
-
-(defn- view-context []
-  {:logined (inject/fn-user-logined?)
-   :title (inject/fn-app-config :platform.name "Clojure Web Platform")})
-
-(defn view [tpl-name & [ctx]]
-  (template tpl-name (merge (view-context) ctx)))

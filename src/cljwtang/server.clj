@@ -29,7 +29,7 @@
         exception-info (stacktrace->string exception)
         at (moment-format)]
     (log/error "Exception:" exception-info)
-    (when prod-mode?
+    (when config/prod-mode?
       (doseq [email (config/system-monitoring-mail-accounts)]
         (log/info "send email to " email)
         (mailer/send-mail-by-template
@@ -49,7 +49,7 @@
 
 (defroutes app-routes
   (apply routes inject/app-routes)
-  (GET "/_lib_version" [] cljwtang/version)
+  (GET "/_lib_version" [] config/version)
   (route/resources "/public")
   (route/not-found inject/not-found-content))
 
@@ -60,14 +60,14 @@
 
 (def ^{:doc "app handler"} app
   (let [app (app-handler [intern-app])
-        app (when-not-> app prod-mode? middlewares/wrap-dev-helper)]
+        app (when-not-> app config/prod-mode? middlewares/wrap-dev-helper)]
     (middlewares/wrap-profile app)))
 
 (defn- load-i18n-dictionary []
   (if (io/resource config/i18n-config-file)
     (do
       (tower/load-dictionary-from-map-resource! config/i18n-config-file)
-      (tower/set-config! [:dev-mode?] dev-mode?))
+      (tower/set-config! [:dev-mode?] config/dev-mode?))
     (log/warn "\tNot found" config/i18n-config-file ",使用默认配置!")))
 
 (defn- run-bootstrap-tasks []
@@ -103,7 +103,7 @@
   (when config/start-nrepl-server?
     (start-nrepl-server))
 
-  (log/info ">>Server start! Run mode: " run-mode))
+  (log/info ">>Server start! Run mode: " config/run-mode))
 
 (defn start-server
   "启动服务器"

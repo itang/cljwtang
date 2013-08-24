@@ -6,23 +6,8 @@
             [cljwtang.template.core :as template]
             [cljwtang.utils.env :as env]))
 
-(def ^{:doc "库版本信息"}
-  version "cljwtang-0.1.0-SNAPSHOT")
-
 (def ^{:doc "获取应用配置"}
   app-config inject/fn-app-config)
-
-(def ^{:doc "应用运行模式(开发或生产)"}
-  run-mode
-  (if (or (env/env-config :wapp-no-dev) (env/env-config :lein-no-dev))
-    "prod"
-    "dev"))
-
-(def ^{:doc "应用是在生产模式下运行?"}
-  prod-mode? (= run-mode "prod"))
-
-(def ^{:doc "应用是在开发模式下运行?"}
-  dev-mode? (= run-mode "dev"))
 
 (defn message
   "消息map"

@@ -15,6 +15,7 @@
                  [cljtang "0.1.2-SNAPSHOT"]
                  [clj-pretty-format "0.1.1"]
                  ;;[prismatic/plumbing "0.1.0"]
+                 [potemkin "0.3.0"]
 
                  [commons-codec/commons-codec "1.8"]
                  [com.lambdaworks/scrypt "1.4.0"]       ; scrypt

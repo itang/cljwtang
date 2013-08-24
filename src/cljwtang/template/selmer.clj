@@ -25,4 +25,4 @@
 
 (defn new-selmer-template-engine []
   (filters/add-filter! :empty? empty?)
-  (SelmerTemplateEngine. :selmer "templates/" ".sm.html"))
+  (SelmerTemplateEngine. :selmer "templates/" ".html"))

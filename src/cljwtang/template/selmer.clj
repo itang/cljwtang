@@ -14,10 +14,8 @@
     (parser/render-file
      (str template-path-prefix template-name template-path-suffix) data))
   (regist-helper [_ k v]
-    (println "H:" k)
     (parser/add-tag! k v))
   (regist-tag [_ k v m]
-    (println "T:" k)
     (parser/add-tag! k v m))
   (regist-filter [_ k v]
     (filters/add-filter! k v))

@@ -40,8 +40,6 @@
   nrepl-server-port
   (env/env-config-int :cljwtang-nrepl-server-port "7888"))
 
-
-
 (def ^{:doc "i18n 配置文件"}
   i18n-config-file "i18n-config.clj")
 

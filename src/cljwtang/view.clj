@@ -63,5 +63,4 @@
                     2 (second more))]
       `(defn ~(symbol method) [args# context#]
          (when-let [~'ctx ~condition]
-           (println ~path)
            (template (str "snippets/" ~path) ~context)))))

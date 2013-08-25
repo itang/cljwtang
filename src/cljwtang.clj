@@ -1,13 +1,29 @@
 (ns cljwtang
   (:require potemkin)
-  (:require [cljwtang config core request response view]
-            [cljwtang.utils env mail scrypt upload]
-            [ring.util.response]
+  (:require [ring.util.response]
             [compojure.core]
             [noir.response]
-            [noir.session]))
+            [noir.session]
+            [cljwtang config core request response view]
+            [cljwtang.utils env mail scrypt upload]))
 
 (potemkin/import-vars
+ [potemkin
+  import-vars]
+
+ [compojure.core
+  defroutes
+  GET
+  POST]
+
+ [ring.util.response
+  not-found]
+
+ [noir.response
+  json
+  content-type
+  redirect]
+
  [cljwtang.config
   version
   run-mode prod-mode? dev-mode?
@@ -56,22 +72,9 @@
   encrypt
   check
   verify]
- 
+
  [cljwtang.utils.upload
-  upload-file]
- 
- [compojure.core
-  defroutes
-  GET
-  POST]
- 
- [ring.util.response
-  not-found]
- 
- [noir.response
-  json
-  content-type
-  redirect])
+  upload-file])
 
 (defn session-remove!
   "remove session data"

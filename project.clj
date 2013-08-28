@@ -15,7 +15,7 @@
                  [cljtang "0.1.2-SNAPSHOT"]
                  [clj-pretty-format "0.1.1"]
                  ;;[prismatic/plumbing "0.1.0"]
-                 [potemkin "0.3.0"]
+                 [potemkin "0.3.2"]
 
                  [commons-codec/commons-codec "1.8"]
                  [com.lambdaworks/scrypt "1.4.0"]       ; scrypt
@@ -53,7 +53,7 @@
                  ;;:exclusions [ring/ring-core]]      ; authentication
                  [compojure "1.1.5"]                  ; web framework
                  [stencil "0.3.2"]                    ; mustache template
-                 [selmer "0.4.0"]                     ; A fast, Django inspired
+                 [selmer "0.4.2"]                     ; A fast, Django inspired
                  ;;[hbs "0.4.1"]                        ; handlebars template
                  [lib-noir "0.6.8"]                   ; middleware
 

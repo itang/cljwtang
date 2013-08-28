@@ -13,6 +13,7 @@
 
  [compojure.core
   defroutes
+  context
   GET
   POST]
 

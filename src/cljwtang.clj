@@ -4,7 +4,7 @@
             [compojure.core]
             [noir.response]
             [noir.session]
-            [cljwtang config core request response view]
+            [cljwtang env-config config core request response view]
             [cljwtang.utils env mail scrypt upload]))
 
 (potemkin/import-vars
@@ -25,13 +25,16 @@
   content-type
   redirect]
 
- [cljwtang.config
+ [cljwtang.env-config
   version
   run-mode prod-mode? dev-mode?
   server-port
-  hostname hostaddr
   start-nrepl-server? nrepl-server-port
-  i18n-config-file
+  i18n-config-file]
+
+ [cljwtang.config
+
+  hostname hostaddr
   mail-server mail-vendors-out-rule system-monitoring-mail-accounts
   appdata-dir]
 

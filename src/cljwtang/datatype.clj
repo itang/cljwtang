@@ -1,6 +1,7 @@
 (ns cljwtang.datatype
   (:refer-clojure :exclude [name sort])
-  (:require [cljtang.core :refer :all]))
+  (:require [clojure.tools.logging :as log]
+            [cljtang.core :refer :all]))
 
 (defprotocol Base
   (name [this] "名称")
@@ -8,6 +9,10 @@
 
 (defprotocol Sort
   (sort [this] "排序号"))
+
+(defprotocol Module
+  (init [this] "初始化")
+  (destroy [this] "销毁"))
 
 (defprotocol UiModule
   (routes [this] "路由表")
@@ -21,10 +26,17 @@
   (nil-> coll []))
 
 (defrecord UiModuleRecord
-  [name description routes fps menus snippets-ns bootstrap-tasks contollers]
+  [name description routes fps menus snippets-ns bootstrap-tasks contollers init destroy]
   Base 
   (name [_] name)
   (description [_] description)
+  Module
+  (init [this]
+    (when init
+      (init this)))
+  (destroy [this]
+    (when destroy
+      (destroy this)))
   UiModule
   (routes [_] (nil->empty routes))
   (fps [_] (nil->empty fps))
@@ -32,6 +44,9 @@
   (snippets-ns [_] (nil->empty snippets-ns))
   (bootstrap-tasks [_] (nil->empty bootstrap-tasks))
   (contollers [_] (nil->empty contollers)))
+
+(defprotocol RegistModule
+  (regist-module [this module] "注册模块"))
 
 (defn new-ui-module
   ([]
@@ -150,3 +165,58 @@
         parents (sort-by :sort (filter #(nil? (:parent %)) menus))]
     (for [parent parents]
       (menu1 parent menus))))
+
+(defn- flatten-m [modules f]
+  (->> modules (map f) flatten))
+
+(defrecord AppModule [name description before-init after-init modules]
+   Base 
+  (name [_] name)
+  (description [_] description)
+  Module
+  (init [this]
+    (log/info (.name this) "init...")
+    (when before-init (before-init this))
+    (doseq [m @modules]
+      (log/info "module" (.name m) "init...")
+      (cljwtang.datatype/init m))
+    ;; bootstrap tasks
+	  (doseq [task (sort-by sort (bootstrap-tasks this))]
+	    (try
+	      (let [name (.name task)
+	            f (run-fn task)
+	            run? ((run? task))]
+         (log/info "run" name "task?" run?)
+	        (when run?
+           (log/info name " run")
+	          (f)))
+	      (catch Exception e
+	        (.printStackTrace e))))
+   (when after-init (after-init this))
+   (log/info (.name this) "init finished."))
+  (destroy [this]
+    (doseq [m @modules] (destroy m))
+    (println (.name this) " destory"))
+  RegistModule
+  (regist-module [this module]
+    (swap! modules conj module))
+  UiModule
+  (routes [_]
+    (flatten-m @modules routes))
+  (fps [_]
+    (flatten-m @modules fps))
+  (menus [_]
+    (flatten-m @modules menus))
+  (snippets-ns [_]
+    (flatten-m @modules snippets-ns))
+  (bootstrap-tasks [_]
+    (flatten-m @modules bootstrap-tasks))
+  (contollers [_]
+    (flatten-m @modules contollers)))
+
+(defn new-app-module
+  ([name description before-init after-init]
+    (new-app-module name description before-init after-init (atom [])))
+  ([name description before-init after-init modules]
+   (->AppModule name description before-init after-init modules)))
+

@@ -1,26 +1,8 @@
 (ns cljwtang.config
   (:require [me.raynes.fs :refer [file home exists? mkdirs]]
             [cljwtang.inject :refer [fn-app-config]]
-            [cljwtang.utils.env :as env]))
-
-(def ^{:doc "库版本信息"}
-  version "cljwtang-0.1.0-SNAPSHOT")
-
-(def ^{:doc "应用运行模式(开发或生产)"}
-  run-mode
-  (if (or (env/env-config :wapp-no-dev) (env/env-config :lein-no-dev))
-    "prod"
-    "dev"))
-
-(def ^{:doc "应用是在生产模式下运行?"}
-  prod-mode? (= run-mode "prod"))
-
-(def ^{:doc "应用是在开发模式下运行?"}
-  dev-mode? (= run-mode "dev"))
-
-(def ^{:doc "web服务端口"}
-  server-port
-  (env/env-config-int :cljwtang-server-port "3000"))
+            [cljwtang.utils.env :as env]
+            [cljwtang.env-config :refer :all]))
 
 (defn hostname
   "主机名"
@@ -31,17 +13,6 @@
   "主机地址: 主机名:端口"
   []
   (str (hostname) (when (not= 80 server-port) (str ":" server-port))))
-
-(def ^{:doc "start nrepl server"}
-  start-nrepl-server?
-  (env/env-config-bool :cljwtang-start-nrepl-server "false"))
-
-(def ^{:doc "nrepl server port"}
-  nrepl-server-port
-  (env/env-config-int :cljwtang-nrepl-server-port "7888"))
-
-(def ^{:doc "i18n 配置文件"}
-  i18n-config-file "i18n-config.clj")
 
 (defn mail-server
   "stmp 服务器配置"

@@ -4,6 +4,7 @@
             [noir.response :refer [json]]
             [cljwtang.inject :as inject]
             [cljwtang.template.core :as template]
+            [cljwtang.global :refer [template-engine]]
             [cljwtang.utils.env :as env]))
 
 (def ^{:doc "获取应用配置"}
@@ -114,29 +115,29 @@
 (defn render-string
   "render template from string"
   [template data]
-  (template/render-string inject/*template-engine* template data))
+  (template/render-string template-engine template data))
 
 (defn render-file
   "render template form file"
   [template-name data]
-  (template/render-file inject/*template-engine* template-name data))
+  (template/render-file template-engine template-name data))
 
 (defn regist-helper
   "regist helper"
   [k v]
-  (template/regist-helper inject/*template-engine* k v))
+  (template/regist-helper template-engine k v))
 
 (defn regist-tag
   "regist tags"
   [k v]
-  (template/regist-tag inject/*template-engine* k v (->> k name (str "end-") keyword)))
+  (template/regist-tag template-engine k v (->> k name (str "end-") keyword)))
 
 (defn template-engine-name
   "template-engine name"
   []
-  (template/name inject/*template-engine*))
+  (template/name template-engine))
 
 (defn clear-template-cache!
   "clear template's cache"
   []
-  (template/clear-cache! inject/*template-engine*))
+  (template/clear-cache! template-engine))

@@ -5,40 +5,20 @@
             [taoensso.tower :as tower]
             [cljwtang.inject :as inject]
             [cljwtang.core :refer :all]
+            [cljwtang.env-config :as env-config]
             [cljwtang.config :as config]
             [cljwtang.template.core :refer [name]]))
 
-(def ^:private te-name (name inject/*template-engine*))
-(defn- selmer? []
-  (= :selmer te-name))
-
 (def ^:private static-context
-  {:mode config/run-mode
+  {:mode env-config/run-mode
    :host (config/hostaddr)
-   :is-prod-mode config/prod-mode?
-   :is-dev-mode config/dev-mode?})
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; init
-
-(defn- init []
-  (println "view init ...")
-  (regist-helper :i18n 
-                 (fn [args context]
-                   (tower/t (-> args first keyword))))
-  (regist-helper :chan-active
-              (fn [args context]
-                (when (= (first args) (:channel context))
-                  "active"))))
-
-(init)
+   :is-prod-mode env-config/prod-mode?
+   :is-dev-mode env-config/dev-mode?})
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; public api
 (defn template [tpl-name & [ctx]]
   (render-file tpl-name (merge static-context ctx)))
-
-;;; view
 
 (defn- view-context []
   {:logined (inject/fn-user-logined?)

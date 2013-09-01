@@ -177,6 +177,9 @@
 (defn- flatten-m [modules f]
   (->> modules (map f) flatten))
 
+(defprotocol Modules
+  (modules [this] "获取所有模块"))
+
 (defrecord AppModule [name description before-init after-init modules]
    Base 
   (name [_] name)
@@ -205,6 +208,8 @@
   (destroy [this]
     (doseq [m @modules] (destroy m))
     (println (cljwtang.core/name this) " destory"))
+  Modules
+  (modules [_] @modules)
   RegistModule
   (regist-module [this module]
     (swap! modules conj module))
@@ -260,11 +265,17 @@
   (doseq [[k v] helpers]
     (template/regist-helper template-engine k v))))
 
-(def app-module (new-app-module 
-                  "cljwtang"
-                  "cljwtang web app"
-                  nil
-                  (fn [m] (load-snippets (snippets-ns app-module)))))
+(def ^{:doc "应用主模块"} app-module
+  (new-app-module 
+    "cljwtang"
+    "cljwtang web app"
+    nil
+    (fn [m] (load-snippets (snippets-ns app-module)))))
+
+(defn app-sub-modules
+  "获取应用的所有子模块"
+  []
+  (modules app-module))
 
 (defn regist-modules! [& modules]
   (doseq [m modules] (regist-module app-module m)))

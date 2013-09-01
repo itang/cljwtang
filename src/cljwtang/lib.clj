@@ -60,6 +60,7 @@
   menu-tree
   #_(new-app-module)
   app-module
+  app-sub-modules
   regist-modules!
   init-app-module!
   app-routes

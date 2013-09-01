@@ -5,7 +5,7 @@
             [cljtang.core :refer :all]
             [taoensso.tower :as tower]
             [korma.db :refer [defdb h2]]
-              [clojure.tools.nrepl.server :as nrepl-server]
+            [clojure.tools.nrepl.server :as nrepl-server]
             [cljwtang.utils.env :as env]
             [cljwtang.template.core :as template]
             [cljwtang.template.selmer :as selmer]

@@ -1,4 +1,4 @@
-(ns cljwtang.request)
+(ns cljwtang.web.request)
 
 (defn ajax? [req]
   (= "XMLHttpRequest"

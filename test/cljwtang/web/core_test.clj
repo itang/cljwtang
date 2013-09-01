@@ -1,6 +1,6 @@
-(ns cljwtang.core-test
+(ns cljwtang.web.core-test
   (:use clojure.test
-        cljwtang.core))
+        cljwtang.web.core))
 
 (defhandler h1 [a b]
   (str a b))

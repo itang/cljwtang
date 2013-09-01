@@ -1,45 +1,83 @@
-(ns cljwtang
+(ns cljwtang.lib
   (:require potemkin)
-  (:require [ring.util.response]
-            [compojure.core]
-            [noir.response]
-            [noir.session]
-            [cljwtang env-config config core request response view]
+  (:require [clojure.tools.logging]
+            [ring.util.response]
+            [compojure core]
+            [noir response session]
+            [noir.util.middleware]
+
+            [cljwtang.core]
+            [cljwtang.config.app]
+            [cljwtang.web core request response view middleware]
             [cljwtang.utils env mail scrypt upload]))
 
 (potemkin/import-vars
  [potemkin
   import-vars]
 
+ [clojure.tools.logging
+  debug info warn error]
+
  [compojure.core
   defroutes
   context
   GET
-  POST]
+  POST
+  routes]
 
  [ring.util.response
-  not-found]
+  not-found
+  status]
 
  [noir.response
   json
   content-type
   redirect]
 
- [cljwtang.env-config
+ [noir.util.middleware
+  app-handler]
+
+ [cljwtang.config.app
   version
   run-mode prod-mode? dev-mode?
   server-port
   start-nrepl-server? nrepl-server-port
-  i18n-config-file]
-
- [cljwtang.config
-
+  i18n-config-file
   hostname hostaddr
   mail-server mail-vendors-out-rule system-monitoring-mail-accounts
   appdata-dir]
 
  [cljwtang.core
-  app-config
+  #_(name sort)
+  #_(init)
+  description
+  new-ui-module
+  new-bootstrap-task
+  new-funcpoint
+  new-element-attrs
+  new-menu
+  maps->menus
+  menu-tree
+  #_(new-app-module)
+  app-module
+  regist-modules!
+  init-app-module!
+  app-routes
+  app-bootstrap-tasks
+  app-menus
+  app-snippet-ns
+  *app-config-fn*
+  *user-logined?-fn*
+  *current-user-fn*
+  *db-config*
+  *not-found-content*
+  set-user-logined?-fn!
+  set-app-config-fn!
+  set-current-user-fn!
+  set-db-config!
+  set-not-found-content!]
+
+ [cljwtang.web.core
   message json-message success-message json-success-message failture-message
   json-failture-message error-message json-error-message info-message json-info-message
   flash-msg
@@ -51,16 +89,23 @@
   render-string render-file regist-helper regist-tag regist-tag template-engine-name
   clear-template-cache!]
 
- [cljwtang.request
+ [cljwtang.web.request
   ajax?]
 
- [cljwtang.response
+ [cljwtang.web.response
   html content-length]
 
- [cljwtang.view
+ [cljwtang.web.view
   template
   view
   defsnippet]
+
+ [cljwtang.web.middleware
+  wrap-templates-refresh
+  wrap-request-log
+  wrap-dev-helper
+  wrap-profile
+  wrap-exception-handling ]
 
  [cljwtang.utils.env
   env-config

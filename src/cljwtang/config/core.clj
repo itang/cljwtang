@@ -1,4 +1,4 @@
-(ns cljwtang.env-config
+(ns cljwtang.config.core
   (:require [cljwtang.utils.env :as env]))
 
 (def ^{:doc "库版本信息"}

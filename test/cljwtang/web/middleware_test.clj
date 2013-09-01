@@ -1,6 +1,6 @@
-(ns cljwtang.middleware-test
+(ns cljwtang.web.middleware-test
   (use clojure.test
-       cljwtang.middleware))
+       cljwtang.web.middleware))
 
 (defn- h1 [req] "a")
 

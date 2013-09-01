@@ -1,28 +1,29 @@
-(ns cljwtang.view
+(ns cljwtang.web.view
   (:refer-clojure :exclude [name])
   (:require [clojure.string :as str]
+            [clojure.tools.logging :as log]
             [cljtang.core :refer :all]
             [taoensso.tower :as tower]
-            [cljwtang.inject :as inject]
-            [cljwtang.core :refer :all]
-            [cljwtang.env-config :as env-config]
-            [cljwtang.config :as config]
-            [cljwtang.template.core :refer [name]]))
+            [cljwtang.core :as core]
+            [cljwtang.config.app :as config]
+            [cljwtang.template.core :refer [name]]
+            [cljwtang.web.core :refer :all]))
 
 (def ^:private static-context
-  {:mode env-config/run-mode
+  {:mode config/run-mode
+   :is-prod-mode config/prod-mode?
+   :is-dev-mode config/dev-mode?})
+
+(defn- view-context []
+  {:logined (core/*user-logined?-fn*)
    :host (config/hostaddr)
-   :is-prod-mode env-config/prod-mode?
-   :is-dev-mode env-config/dev-mode?})
+   :title (core/*app-config-fn* :platform.name "Clojure Web Platform")})
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; public api
 (defn template [tpl-name & [ctx]]
   (render-file tpl-name (merge static-context ctx)))
 
-(defn- view-context []
-  {:logined (inject/fn-user-logined?)
-   :title (inject/fn-app-config :platform.name "Clojure Web Platform")})
 
 (defn view [tpl-name & [ctx]]
   (template tpl-name (merge (view-context) ctx)))

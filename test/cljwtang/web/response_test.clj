@@ -1,6 +1,6 @@
-(ns cljwtang.response-test
+(ns cljwtang.web.response-test
   (:use clojure.test
-        cljwtang.response))
+        cljwtang.web.response))
 
 (deftest html-test
   (is (= {:headers

@@ -1,143 +1,351 @@
 (ns cljwtang.core
-  (:require [noir.request :refer [*request*]]
-            [noir.session :as session]
-            [noir.response :refer [json]]
-            [cljwtang.inject :as inject]
+  (:refer-clojure :exclude [name sort])
+  (:require [clojure.java.io :as io]
+            [clojure.tools.logging :as log]
+            [cljtang.core :refer :all]
+            [taoensso.tower :as tower]
+            [korma.db :refer [defdb h2]]
+              [clojure.tools.nrepl.server :as nrepl-server]
+            [cljwtang.utils.env :as env]
             [cljwtang.template.core :as template]
-            [cljwtang.global :refer [template-engine]]
-            [cljwtang.utils.env :as env]))
+            [cljwtang.template.selmer :as selmer]
+            [cljwtang.config.core :as config]))
 
-(def ^{:doc "获取应用配置"}
-  app-config inject/fn-app-config)
+(defprotocol Base
+  (name [this] "名称")
+  (description [this] "描述"))
 
-(defn message
-  "消息map"
-  [success pmessage & [data detailMessage ptype]]
-  (let [pmessage (or pmessage "")
-        data (or data {})
-        detailMessage (or detailMessage "")
-        ptype (or ptype (if success :success :error))]
-    {:success success
-     :message pmessage
-     :data data
-     :detailMessage detailMessage
-     :type ptype}))
+(defprotocol Sort
+  (sort [this] "排序号"))
 
-(def ^{:doc "消息map -> JSON"}
-  json-message (comp json message))
+(defprotocol Module
+  (init [this] "初始化")
+  (destroy [this] "销毁"))
 
-(defn success-message
-  "success消息map"
-  [pmessage & [data detailMessage]]
-  (message true pmessage data detailMessage))
+(defprotocol UiModule
+  (routes [this] "路由表")
+  (fps [this] "功能点")
+  (menus [this] "菜单")
+  (snippets-ns [this] "Snippets 名字空间")
+  (bootstrap-tasks [this] "系统启动时任务")
+  (contollers [this] "客户端Controllers"))
 
-(def ^{:doc "success消息map -> JSON"}
-  json-success-message (comp json success-message))
+(defn- nil->empty [coll]
+  (nil-> coll []))
 
-(defn failture-message
-  "failture消息map"
-  [pmessage & [data detailMessage]]
-  (message false pmessage data detailMessage))
+(defrecord UiModuleRecord
+  [name description routes fps menus snippets-ns bootstrap-tasks contollers init destroy]
+  Base 
+  (name [_] name)
+  (description [_] description)
+  Module
+  (init [this]
+    (when init
+      (init this)))
+  (destroy [this]
+    (when destroy
+      (destroy this)))
+  UiModule
+  (routes [_] (nil->empty routes))
+  (fps [_] (nil->empty fps))
+  (menus [_] (nil->empty menus))
+  (snippets-ns [_] (nil->empty snippets-ns))
+  (bootstrap-tasks [_] (nil->empty bootstrap-tasks))
+  (contollers [_] (nil->empty contollers)))
 
-(def ^{:doc "failture消息map -> JSON"}
-  json-failture-message (comp json failture-message))
+(defprotocol RegistModule
+  (regist-module [this module] "注册模块"))
 
-(def ^{:doc "error消息map"}
-  error-message failture-message)
-
-(def ^{:doc "error消息map -> JSON"}
-  json-error-message (comp json error-message))
-
-(defn info-message
-  "info消息map"
-  [pmessage & [data detailMessage]]
-  (message true pmessage data detailMessage :info))
-
-(def ^{:doc "info消息map -> JSON"}
-  json-info-message (comp json info-message))
-
-(defn flash-msg
-  "获取或设置flash msg"
+(defn new-ui-module
   ([]
-    (session/flash-get :msg))
-  ([msg]
-    (session/flash-put! :msg msg)))
+    (new-ui-module {}))
+  ([m]
+    (let [es-keys
+          [:routes :fps :menus :snippets-ns :bootstrap-tasks :contollers]
+          m 
+          (loop [r m keys es-keys]
+            (if-not keys
+              r
+              (recur (update-in r [(first keys)] nil->empty) (next keys))))]
+      (map->UiModuleRecord m))))
 
-(defn flash-post-params
-  "获取或设置flash post params"
-  ([]
-    (session/flash-get :post-params))
-  ([msg]
-    (session/flash-put! :post-params msg)))
+(defprotocol BootstrapTask
+  (run? [this] "是否执行")
+  (run-fn [this] "执行体"))
 
-(defn postback-params
-  "收集参数(来自请求参数和本页面post提交的)"
-  []
-  (merge (:params *request*) (flash-post-params)))
+(defrecord BootstrapTaskRecord
+  [name description sort run? run-fn]
+  Base 
+  (name [_] name)
+  (description [_] description)
+  Sort
+  (sort [_] sort)
+  BootstrapTask
+  (run? [_] run?)
+  (run-fn [_] run-fn))
 
-;;@see http://blog.fnil.net/index.php/archives/27
-(defmacro defhandler
-  [name args & body]
-  `(defn ~name [~'req]
-     (let [{:keys ~args :or {~'req ~'req}} (:params ~'req)]
-       ~@body)))
+(defn new-bootstrap-task [m]
+  (map->BootstrapTaskRecord m))
 
-;;;; validate fn 规范
-;;;;  (validate-fn (:params *request*)) => {:user ["error1"]}
-(defmacro with-validates [validates-fn success failture]
-  `(let [~'find (atom  false)
-         ~'fs (atom ~validates-fn)
-         ~'ret (atom nil)
-         ~'p (:params *request*)]
-     (while (and (not @~'find)
-                 (not (empty? @~'fs)))
-       (let [~'f (first @~'fs)
-             ~'r (~'f ~'p)]
-         (if-not (empty? ~'r)
-           (do (reset! ~'find true) (reset! ~'ret ~'r))
-           (do (reset! ~'fs (next @~'fs))))))
-     (if-not (empty? @~'ret)
-       (do
-         (flash-msg (failture-message "验证错误" @~'ret))
-         (flash-post-params ~'p)
-         ~failture)
-       ~success)))
+(defprotocol FuncPoint
+  (url [this] "URL")
+  (perm [this] "权限")
+  (module [this] "所属模块"))
 
-(defmacro defhandler-with-validates
-  [handler args validates-fn &
-   {:keys [success failture]
-    :or {failture
-         #(throw (Exception. "validate error"))}}]
-  `(defhandler ~handler [~@args]
-     (with-validates ~validates-fn ~success ~failture)))
+(defrecord FuncPointRecord
+  [name url perm module description]
+  Base 
+  (name [_] name)
+  (description [_] description)
+  FuncPoint
+  (url [_] url)
+  (perm [_] perm)
+  (module [_] module))
 
-;;; for template
-(defn render-string
-  "render template from string"
-  [template data]
-  (template/render-string template-engine template data))
+(defn new-funcpoint [m]
+   (map->FuncPointRecord m))
 
-(defn render-file
-  "render template form file"
-  [template-name data]
-  (template/render-file template-engine template-name data))
+(defprotocol ElementAttrs
+  (classname [this] "css class名称")
+  (target [this] "打开方式"))
 
-(defn regist-helper
-  "regist helper"
-  [k v]
-  (template/regist-helper template-engine k v))
+(defrecord ElementAttrsRecord
+  [classname target]
+  ElementAttrs
+  (classname [_] classname)
+  (target [_] target))
 
-(defn regist-tag
-  "regist tags"
-  [k v]
-  (template/regist-tag template-engine k v (->> k name (str "end-") keyword)))
+(defn new-element-attrs [m]
+  (map->ElementAttrsRecord m))
 
-(defn template-engine-name
-  "template-engine name"
-  []
-  (template/name template-engine))
+;; 菜单项
+(defprotocol Menu 
+  (id [this] "ID")
+  (funcpoint [this] "对应功能点")
+  (attrs [this] "属性")
+  (children [this] "子级")
+  (parent [this] "父级"))
 
-(defn clear-template-cache!
-  "clear template's cache"
-  []
-  (template/clear-cache! template-engine))
+(defrecord MenuRecord
+  [id name funcpoint attrs children parent sort description]
+  Base 
+  (name [_] name)
+  (description [_] description)
+  Sort
+  (sort [_] sort)
+  Menu
+  (id [_] id)
+  (funcpoint [_] funcpoint)
+  (attrs [_] attrs)
+  (children [_] children)
+  (parent [_] parent))
+
+(defn new-menu [m]
+  (let [m (if (:sort m) m (assoc m :sort 100))
+        m (if (:id m) m (assoc m :id (:name m)))
+        attrs (:attrs m)
+        m (if attrs 
+            (if (instance? ElementAttrsRecord attrs) 
+              m
+              (assoc m :attrs (new-element-attrs attrs)))
+            (assoc m :attrs (new-element-attrs {:classname "icol-user"})))
+        fp (:funcpoint m)
+        m (if-not (instance? FuncPointRecord fp)
+            (if fp
+              (assoc m :funcpoint (new-funcpoint fp))
+              m)
+            m)]
+    (map->MenuRecord m)))
+
+(defn maps->menus [maps]
+  (map new-menu maps))
+
+(defn- menus-by-parent [menus parent]
+  (let [parent-id (:id parent)]
+    (filter #(= parent-id (:parent %)) menus)))
+
+(defn- menu1 [parent menus]
+  (let [children (sort-by :sort (menus-by-parent menus parent))]
+    (assoc parent :children children )))
+
+(defn menu-tree [& menus]
+  (let [menus (flatten menus)
+        parents (sort-by :sort (filter #(nil? (:parent %)) menus))]
+    (for [parent parents]
+      (menu1 parent menus))))
+
+(defn- flatten-m [modules f]
+  (->> modules (map f) flatten))
+
+(defrecord AppModule [name description before-init after-init modules]
+   Base 
+  (name [_] name)
+  (description [_] description)
+  Module
+  (init [this]
+    (log/info (cljwtang.core/name this) "init...")
+    (when before-init (before-init this))
+    (doseq [m @modules]
+      (log/info "module" (cljwtang.core/name m) "init...")
+      (cljwtang.core/init m))
+    ;; bootstrap tasks
+	  (doseq [task (sort-by sort (bootstrap-tasks this))]
+	    (try
+	      (let [name (cljwtang.core/name task)
+	            f (run-fn task)
+	            run? ((run? task))]
+         (log/info "run" name "task?" run?)
+	        (when run?
+           (log/info name " run")
+	          (f)))
+	      (catch Exception e
+	        (.printStackTrace e))))
+   (when after-init (after-init this))
+   (log/info (cljwtang.core/name this) "init finished."))
+  (destroy [this]
+    (doseq [m @modules] (destroy m))
+    (println (cljwtang.core/name this) " destory"))
+  RegistModule
+  (regist-module [this module]
+    (swap! modules conj module))
+  UiModule
+  (routes [_]
+    (flatten-m @modules routes))
+  (fps [_]
+    (flatten-m @modules fps))
+  (menus [_]
+    (flatten-m @modules menus))
+  (snippets-ns [_]
+    (flatten-m @modules snippets-ns))
+  (bootstrap-tasks [_]
+    (flatten-m @modules bootstrap-tasks))
+  (contollers [_]
+    (flatten-m @modules contollers)))
+
+(defn new-app-module
+  ([name description before-init after-init]
+    (new-app-module name description before-init after-init (atom [])))
+  ([name description before-init after-init modules]
+   (->AppModule name description before-init after-init modules)))
+
+(defonce ^:dynamic *app-config-fn* env/env-config)
+
+(defonce ^:dynamic *user-logined?-fn* (constantly false))
+
+(defonce ^:dynamic *current-user-fn* (constantly nil))
+
+(defonce ^:dynamic *db-config*
+  (h2 {:subname "~/cljwtang_dev;AUTO_SERVER=TRUE"
+       :user "sa"
+       :password ""}))
+
+(defdb default-db *db-config*)
+
+(defonce ^:dynamic *not-found-content* "Not Found")
+
+(defonce template-engine
+  (selmer/new-selmer-template-engine))
+
+(defn- load-snippets
+  "在指定名字空间加载所有的snippets"
+  [nss]
+  (doseq [n nss] (require n))
+  (let [helpers (->> nss
+    (map ns-publics)
+    (map (partial map 
+     (fn [[k v]]
+       [(keyword (str "snippet-" k)) (var-get v)])))
+    (flatten)
+    (apply hash-map))]
+  (doseq [[k v] helpers]
+    (template/regist-helper template-engine k v))))
+
+(def app-module (new-app-module 
+                  "cljwtang"
+                  "cljwtang web app"
+                  nil
+                  (fn [m] (load-snippets (snippets-ns app-module)))))
+
+(defn regist-modules! [& modules]
+  (doseq [m modules] (regist-module app-module m)))
+
+(defn app-routes []
+  (routes app-module))
+
+(defn app-bootstrap-tasks []
+  (bootstrap-tasks app-module))
+
+(defn app-menus []
+  (menu-tree (menus app-module)))
+
+(defn app-snippet-ns []
+  (snippets-ns app-module))
+
+(defn- inject-var [v new-value]
+  (alter-var-root v (constantly new-value)))
+
+(defn set-user-logined?-fn! [f]
+  (inject-var #'*user-logined?-fn* f))
+
+(defn set-app-config-fn! [f]
+  (inject-var #'*app-config-fn* f))
+
+(defn set-current-user-fn! [f]
+  (inject-var #'*current-user-fn* f))
+
+(defn set-db-config! [db-config]
+  (inject-var #'*db-config* db-config)
+  (defdb latest-db db-config))
+
+(defn set-not-found-content! [content]
+  (inject-var #'*not-found-content* content))
+
+(defn- load-i18n-dictionary []
+  (if (io/resource config/i18n-config-file)
+    (do
+      (tower/load-dictionary-from-map-resource! config/i18n-config-file)
+      (tower/set-config! [:dev-mode?] config/dev-mode?))
+    (log/warn "\tNot found" config/i18n-config-file ",使用默认配置!")))
+
+(defn- tower-module []
+  (new-ui-module
+   {:name "tower"
+    :init (fn [m]
+            (load-i18n-dictionary))}))
+
+(defn- start-nrepl-server []
+  (defonce nrepl-server
+    (nrepl-server/start-server :port config/nrepl-server-port))
+  (log/info (str "use lein to connect nrepl server: lein repl :connect "
+                 config/nrepl-server-port)))
+
+(defn- nrepl-module []
+  (new-ui-module
+   {:name "nrepl"
+    :init (fn [m] (start-nrepl-server))}))
+
+(defn- cljwtang-view-init []
+  (log/info "regist-helper" "i18n") 
+   (template/regist-helper template-engine
+                  :i18n
+                   (fn [args context]
+                     (tower/t (-> args first keyword))))
+   (log/info "regist-helper" "chan-active") 
+   (template/regist-helper template-engine
+                  :chan-active
+                  (fn [args context]
+                    (when (= (first args) (:channel context))
+                      "active"))))
+
+(defn- cljwtang-view-module []
+  (new-ui-module
+   {:name "cljwtang-view"
+    :init (fn [m] (cljwtang-view-init))}))
+
+(defn init-app-module! []
+  (init app-module))
+
+(regist-modules!
+  (tower-module)
+  (nrepl-module)
+  (cljwtang-view-module))

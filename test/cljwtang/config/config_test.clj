@@ -1,7 +1,7 @@
-(ns cljwtang.config-test
+(ns cljwtang.config.config-test
   (:require [me.raynes.fs :refer [home file]])
   (:use clojure.test
-        cljwtang.config))
+        cljwtang.config.app))
 
 (deftest appdata-dir-test
   (let [path

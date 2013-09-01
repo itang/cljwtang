@@ -1,4 +1,4 @@
-(ns cljwtang.response
+(ns cljwtang.web.response
   (:require [noir.response :refer [content-type set-headers]]))
 
 (defn html

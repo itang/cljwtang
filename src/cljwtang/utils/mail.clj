@@ -3,9 +3,8 @@
             [clojure.string :as string]
             [cljtang.core :refer :all]
             [postal.core :as postal]
-            [cljwtang.view :refer [template]]
-            [cljwtang.config :as config]
-            [cljwtang.view :as view]))
+            [cljwtang.config.app :as config]
+            [cljwtang.web.view :as view]))
 
 (defn send-mail
   "发送邮件(使用默认服务器配置)."
@@ -22,7 +21,7 @@
   "发送邮件(使用默认服务器配置)."
   [msg template-name ctx & more]
   (let [msg (merge {:body [{:type  "text/html; charset=utf-8"
-                            :content (view/template template-name ctx)}]}
+                            :content (view/view template-name ctx)}]}
                    msg)]
     (apply send-mail msg more)))
 

@@ -1,10 +1,10 @@
-(ns cljwtang.middleware
+(ns cljwtang.web.middleware
   (:require [clojure.string :as str]
             [clojure.tools.logging :as log]
             [noir.response :refer [set-headers]]
-            [cljwtang.core :refer :all :as cljwtang]
-            [cljwtang.view :refer :all]
-            [cljwtang.request :refer [ajax?]]))
+            [cljwtang.web.core :refer :all :as cljwtang]
+            [cljwtang.web.view :refer :all]
+            [cljwtang.web.request :refer [ajax?]]))
 
 (defn- static-resource-request? [request]
   (let [^String uri (:uri request)]

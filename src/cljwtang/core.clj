@@ -11,6 +11,38 @@
             [cljwtang.template.selmer :as selmer]
             [cljwtang.config.core :as config]))
 
+(defn- inject-var [v new-value]
+  (alter-var-root v (constantly new-value)))
+
+(defmacro defdynamic [name init & [after-set]]
+  (let [sname (str "*" name "*")
+        setname (str "set-" name "!")]
+    `(do
+       (def ~(with-meta (symbol sname) (assoc (meta name) :dynamic true)) ~init)
+       (defn ~name [] ~(symbol sname))
+       (defn ~(symbol setname) [~'it]
+         (alter-var-root #'~(symbol sname) (constantly ~'it))
+         (do ~after-set)))))
+
+(defdynamic ^{:doc "应用配置函数"} app-config-fn env/env-config)
+
+(defdynamic user-logined?-fn (constantly false))
+
+(defdynamic current-user-fn (constantly nil))
+
+(defdynamic db-config
+  (h2 {:subname "~/cljwtang_dev;AUTO_SERVER=TRUE"
+       :user "sa"
+       :password ""})
+  (defdb latest-db (db-config)))
+
+(defdb default-db (db-config))
+
+(defdynamic not-found-content "Not Found")
+
+(defonce template-engine
+  (selmer/new-selmer-template-engine))
+
 (defprotocol Base
   (name [this] "名称")
   (description [this] "描述"))
@@ -34,8 +66,8 @@
   (nil-> coll []))
 
 (defrecord UiModuleRecord
-  [name description routes fps menus snippets-ns bootstrap-tasks contollers init destroy]
-  Base 
+    [name description routes fps menus snippets-ns bootstrap-tasks contollers init destroy]
+  Base
   (name [_] name)
   (description [_] description)
   Module
@@ -58,24 +90,24 @@
 
 (defn new-ui-module
   ([]
-    (new-ui-module {}))
+     (new-ui-module {}))
   ([m]
-    (let [es-keys
-          [:routes :fps :menus :snippets-ns :bootstrap-tasks :contollers]
-          m 
-          (loop [r m keys es-keys]
-            (if-not keys
-              r
-              (recur (update-in r [(first keys)] nil->empty) (next keys))))]
-      (map->UiModuleRecord m))))
+     (let [es-keys
+           [:routes :fps :menus :snippets-ns :bootstrap-tasks :contollers]
+           m
+           (loop [r m keys es-keys]
+             (if-not keys
+               r
+               (recur (update-in r [(first keys)] nil->empty) (next keys))))]
+       (map->UiModuleRecord m))))
 
 (defprotocol BootstrapTask
   (run? [this] "是否执行")
   (run-fn [this] "执行体"))
 
 (defrecord BootstrapTaskRecord
-  [name description sort run? run-fn]
-  Base 
+    [name description sort run? run-fn]
+  Base
   (name [_] name)
   (description [_] description)
   Sort
@@ -93,8 +125,8 @@
   (module [this] "所属模块"))
 
 (defrecord FuncPointRecord
-  [name url perm module description]
-  Base 
+    [name url perm module description]
+  Base
   (name [_] name)
   (description [_] description)
   FuncPoint
@@ -103,14 +135,14 @@
   (module [_] module))
 
 (defn new-funcpoint [m]
-   (map->FuncPointRecord m))
+  (map->FuncPointRecord m))
 
 (defprotocol ElementAttrs
   (classname [this] "css class名称")
   (target [this] "打开方式"))
 
 (defrecord ElementAttrsRecord
-  [classname target]
+    [classname target]
   ElementAttrs
   (classname [_] classname)
   (target [_] target))
@@ -119,7 +151,7 @@
   (map->ElementAttrsRecord m))
 
 ;; 菜单项
-(defprotocol Menu 
+(defprotocol Menu
   (id [this] "ID")
   (funcpoint [this] "对应功能点")
   (attrs [this] "属性")
@@ -127,8 +159,8 @@
   (parent [this] "父级"))
 
 (defrecord MenuRecord
-  [id name funcpoint attrs children parent sort description]
-  Base 
+    [id name funcpoint attrs children parent sort description]
+  Base
   (name [_] name)
   (description [_] description)
   Sort
@@ -144,8 +176,8 @@
   (let [m (if (:sort m) m (assoc m :sort 100))
         m (if (:id m) m (assoc m :id (:name m)))
         attrs (:attrs m)
-        m (if attrs 
-            (if (instance? ElementAttrsRecord attrs) 
+        m (if attrs
+            (if (instance? ElementAttrsRecord attrs)
               m
               (assoc m :attrs (new-element-attrs attrs)))
             (assoc m :attrs (new-element-attrs {:classname "icol-user"})))
@@ -181,7 +213,7 @@
   (modules [this] "获取所有模块"))
 
 (defrecord AppModule [name description before-init after-init modules]
-   Base 
+  Base
   (name [_] name)
   (description [_] description)
   Module
@@ -192,19 +224,19 @@
       (log/info "module" (cljwtang.core/name m) "init...")
       (cljwtang.core/init m))
     ;; bootstrap tasks
-	  (doseq [task (sort-by sort (bootstrap-tasks this))]
-	    (try
-	      (let [name (cljwtang.core/name task)
-	            f (run-fn task)
-	            run? ((run? task))]
-         (log/info "run" name "task?" run?)
-	        (when run?
-           (log/info name " run")
-	          (f)))
-	      (catch Exception e
-	        (.printStackTrace e))))
-   (when after-init (after-init this))
-   (log/info (cljwtang.core/name this) "init finished."))
+    (doseq [task (sort-by sort (bootstrap-tasks this))]
+      (try
+        (let [name (cljwtang.core/name task)
+              f (run-fn task)
+              run? ((run? task))]
+          (log/info "run" name "task?" run?)
+          (when run?
+            (log/info name " run")
+            (f)))
+        (catch Exception e
+          (.printStackTrace e))))
+    (when after-init (after-init this))
+    (log/info (cljwtang.core/name this) "init finished."))
   (destroy [this]
     (doseq [m @modules] (destroy m))
     (println (cljwtang.core/name this) " destory"))
@@ -229,48 +261,31 @@
 
 (defn new-app-module
   ([name description before-init after-init]
-    (new-app-module name description before-init after-init (atom [])))
+     (new-app-module name description before-init after-init (atom [])))
   ([name description before-init after-init modules]
-   (->AppModule name description before-init after-init modules)))
+     (->AppModule name description before-init after-init modules)))
 
-(defonce ^:dynamic *app-config-fn* env/env-config)
-
-(defonce ^:dynamic *user-logined?-fn* (constantly false))
-
-(defonce ^:dynamic *current-user-fn* (constantly nil))
-
-(defonce ^:dynamic *db-config*
-  (h2 {:subname "~/cljwtang_dev;AUTO_SERVER=TRUE"
-       :user "sa"
-       :password ""}))
-
-(defdb default-db *db-config*)
-
-(defonce ^:dynamic *not-found-content* "Not Found")
-
-(defonce template-engine
-  (selmer/new-selmer-template-engine))
 
 (defn- load-snippets
   "在指定名字空间加载所有的snippets"
   [nss]
   (doseq [n nss] (require n))
   (let [helpers (->> nss
-    (map ns-publics)
-    (map (partial map 
-     (fn [[k v]]
-       [(keyword (str "snippet-" k)) (var-get v)])))
-    (flatten)
-    (apply hash-map))]
-  (doseq [[k v] helpers]
-    (template/regist-helper template-engine k v))))
+                     (map ns-publics)
+                     (map (partial map
+                                   (fn [[k v]]
+                                     [(keyword (str "snippet-" k)) (var-get v)])))
+                     (flatten)
+                     (apply hash-map))]
+    (doseq [[k v] helpers]
+      (template/regist-helper template-engine k v))))
 
 (def ^{:doc "应用主模块"} app-module
-  (new-app-module 
-    "cljwtang"
-    "cljwtang web app"
-    nil
-    (fn [m] (load-snippets (snippets-ns app-module)))))
+  (new-app-module
+   "cljwtang"
+   "cljwtang web app"
+   nil
+   (fn [m] (load-snippets (snippets-ns app-module)))))
 
 (defn app-sub-modules
   "获取应用的所有子模块"
@@ -291,25 +306,6 @@
 
 (defn app-snippet-ns []
   (snippets-ns app-module))
-
-(defn- inject-var [v new-value]
-  (alter-var-root v (constantly new-value)))
-
-(defn set-user-logined?-fn! [f]
-  (inject-var #'*user-logined?-fn* f))
-
-(defn set-app-config-fn! [f]
-  (inject-var #'*app-config-fn* f))
-
-(defn set-current-user-fn! [f]
-  (inject-var #'*current-user-fn* f))
-
-(defn set-db-config! [db-config]
-  (inject-var #'*db-config* db-config)
-  (defdb latest-db db-config))
-
-(defn set-not-found-content! [content]
-  (inject-var #'*not-found-content* content))
 
 (defn- load-i18n-dictionary []
   (if (io/resource config/i18n-config-file)
@@ -336,17 +332,17 @@
     :init (fn [m] (start-nrepl-server))}))
 
 (defn- cljwtang-view-init []
-  (log/info "regist-helper" "i18n") 
-   (template/regist-helper template-engine
-                  :i18n
-                   (fn [args context]
-                     (tower/t (-> args first keyword))))
-   (log/info "regist-helper" "chan-active") 
-   (template/regist-helper template-engine
-                  :chan-active
-                  (fn [args context]
-                    (when (= (first args) (:channel context))
-                      "active"))))
+  (log/info "regist-helper" "i18n")
+  (template/regist-helper template-engine
+                          :i18n
+                          (fn [args context]
+                            (tower/t (-> args first keyword))))
+  (log/info "regist-helper" "chan-active")
+  (template/regist-helper template-engine
+                          :chan-active
+                          (fn [args context]
+                            (when (= (first args) (:channel context))
+                              "active"))))
 
 (defn- cljwtang-view-module []
   (new-ui-module
@@ -357,6 +353,6 @@
   (init app-module))
 
 (regist-modules!
-  (tower-module)
-  (nrepl-module)
-  (cljwtang-view-module))
+ (tower-module)
+ (nrepl-module)
+ (cljwtang-view-module))

@@ -11,19 +11,6 @@
             [cljwtang.template.selmer :as selmer]
             [cljwtang.config.core :as config]))
 
-(defn- inject-var [v new-value]
-  (alter-var-root v (constantly new-value)))
-
-(defmacro defdynamic [name init & [after-set]]
-  (let [sname (str "*" name "*")
-        setname (str "set-" name "!")]
-    `(do
-       (def ~(with-meta (symbol sname) (assoc (meta name) :dynamic true)) ~init)
-       (defn ~name [] ~(symbol sname))
-       (defn ~(symbol setname) [~'it]
-         (alter-var-root #'~(symbol sname) (constantly ~'it))
-         (do ~after-set)))))
-
 (defdynamic ^{:doc "应用配置函数"} app-config-fn env/env-config)
 
 (defdynamic user-logined?-fn (constantly false))
@@ -34,9 +21,10 @@
   (h2 {:subname "~/cljwtang_dev;AUTO_SERVER=TRUE"
        :user "sa"
        :password ""})
-  (defdb latest-db (db-config)))
+  :after-set
+  (defdb latest-db (get-db-config)))
 
-(defdb default-db (db-config))
+(defdb default-db (get-db-config))
 
 (defdynamic not-found-content "Not Found")
 

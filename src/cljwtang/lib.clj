@@ -106,6 +106,7 @@
   wrap-request-log
   wrap-dev-helper
   wrap-profile
+  wrap-delay
   wrap-exception-handling ]
 
  [cljwtang.utils.env

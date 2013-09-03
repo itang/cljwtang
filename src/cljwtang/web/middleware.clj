@@ -60,3 +60,8 @@
            :body "Application Error!"
            :headers {"Content-Type" "text/html; charset=utf-8"}
            :exception e})))))
+
+(defn wrap-delay [handler]
+  (fn [request]
+    (when-let [ret (handler request)]
+      (if (delay? ret) (force ret) ret))))

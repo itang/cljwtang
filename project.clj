@@ -11,6 +11,7 @@
                  [org.clojure/core.memoize "0.5.6"]
                  [org.clojure/core.match "0.2.0-rc5"]
                  [org.clojure/tools.nrepl "0.2.3"]
+                 [org.clojure/core.typed "0.2.3"]
 
                  [cljtang "0.1.2-SNAPSHOT"]
                  [clj-pretty-format "0.1.1"]
@@ -82,6 +83,7 @@
              :1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}
              :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}}
   :aliases {"run-tests" ["with-profile" "1.4:1.5" "test"]}
+  :core.typed {:check [cljwtang.core]}
   :global-vars {*warn-on-reflection* true}
   :injections [(require 'clojure.pprint)]
   :min-lein-version "2.0.0"

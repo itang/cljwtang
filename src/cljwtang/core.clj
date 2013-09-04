@@ -2,6 +2,7 @@
   (:refer-clojure :exclude [name sort])
   (:require [clojure.java.io :as io]
             [clojure.tools.logging :as log]
+            [clojure.core.typed :refer :all :as typed]
             [cljtang.core :refer :all]
             [taoensso.tower :as tower]
             [korma.db :refer [defdb h2]]
@@ -50,6 +51,7 @@
   (bootstrap-tasks [this] "系统启动时任务")
   (contollers [this] "客户端Controllers"))
 
+(ann nil-empty [(Seqable Any) -> (Seqable Any)])
 (defn- nil->empty [coll]
   (nil-> coll []))
 

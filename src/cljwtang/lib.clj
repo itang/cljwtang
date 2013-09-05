@@ -3,6 +3,7 @@
   (:require [clojure.tools.logging]
             [ring.util.response]
             [compojure core]
+            [clojurewerkz.route-one.core]
             [noir response session]
             [noir.util.middleware]
 
@@ -24,6 +25,14 @@
   GET
   POST
   routes]
+
+ [clojurewerkz.route-one.core
+  path-for
+  url-for
+  defroute
+  with-base-url
+  #_(route)
+  ]
 
  [ring.util.response
   not-found

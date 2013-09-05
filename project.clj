@@ -57,6 +57,7 @@
                  [selmer "0.4.2"]                     ; A fast, Django inspired
                  ;;[hbs "0.4.1"]                        ; handlebars template
                  [lib-noir "0.6.8"]                   ; middleware
+                 [clojurewerkz/route-one "1.0.0-rc2"] ; generates HTTP resource routes
 
                  [com.h2database/h2 "1.3.173"]        ; H2 Driver
                  [postgresql "9.1-901-1.jdbc4"]       ; PostgreSQL Driver

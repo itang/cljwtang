@@ -1,8 +1,10 @@
 (ns cljwtang.web.core
-  (:require [noir.request :refer [*request*]]
+  (:require [compojure.core :refer :all]
+            [noir.request :refer [*request*]]
             [noir.session :as session]
             [noir.response :refer [json]]
-            [cljwtang.core :as core :refer [template-engine]]
+            [clojurewerkz.route-one.core :as route-one]
+            [cljwtang.core :as core :refer [template-engine new-funcpoint]]
             [cljwtang.template.core :as template]
             [cljwtang.utils.env :as env]))
 
@@ -70,6 +72,31 @@
   "收集参数(来自请求参数和本页面post提交的)"
   []
   (merge (:params *request*) (flash-post-params)))
+
+(defmacro with-routes [name & body]
+  `(do (def ~name (atom []))
+       (let [~'_routes ~name]
+         ~@body)))
+
+(defmacro defhandler-meta [meta name args & body]
+  `(do
+     (route-one/defroute ~name ~(:path meta))
+     (if ~(:fp-name meta)
+       (def ~(symbol (str name "-fp"))
+         (new-funcpoint {:name ~(:fp-name meta)
+                         :url ~(:path meta)
+                         :perm ~(:perm meta)})))
+     (defn ~name [~'req]
+       (let [{:keys ~args :or {~'req ~'req}} (:params ~'req)]
+         ~@body))
+     (swap! ~'_routes conj
+            (case ~(:method meta)
+              :get (GET ~(:path meta) ~'req ~name)
+              :post (POST ~(:path meta) ~'req ~name)
+              :delete (DELETE ~(:path meta) ~'req ~name)
+              :put (PUT ~(:path meta) ~'req ~name)
+              (ANY ~(:path meta) ~'req ~name)))
+     ))
 
 ;;@see http://blog.fnil.net/index.php/archives/27
 (defmacro defhandler

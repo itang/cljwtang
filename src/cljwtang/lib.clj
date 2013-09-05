@@ -93,6 +93,8 @@
   flash-msg
   flash-post-params
   postback-params
+  with-routes
+  defhandler-meta
   defhandler
   with-validates
   defhandler-with-validates

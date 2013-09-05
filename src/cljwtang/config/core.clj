@@ -1,7 +1,7 @@
 (ns cljwtang.config.core
   (:require [cljwtang.utils.env :as env]))
 
-(def ^{:doc "库版本信息"}
+(def ^{:constant true :doc "库版本信息"}
   version "cljwtang-0.1.0-SNAPSHOT")
 
 (def ^{:doc "应用运行模式(开发或生产)"}
@@ -28,5 +28,5 @@
   nrepl-server-port
   (env/env-config-int :cljwtang-nrepl-server-port "7888"))
 
-(def ^{:doc "i18n 配置文件"}
+(def ^{:constant true :doc "i18n 配置文件"}
   i18n-config-file "i18n-config.clj")

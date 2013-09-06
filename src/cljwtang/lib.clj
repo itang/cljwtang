@@ -94,10 +94,7 @@
   flash-post-params
   postback-params
   with-routes
-  defhandler-meta
   defhandler
-  with-validates
-  defhandler-with-validates
   render-string render-file regist-helper regist-tag regist-tag template-engine-name
   clear-template-cache!]
 

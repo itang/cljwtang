@@ -1,5 +1,6 @@
 (ns cljwtang.web.core
-  (:require [compojure.core :refer :all]
+  (:require [clojure.tools.macro :refer [name-with-attributes]]
+            [compojure.core :refer :all]
             [noir.request :refer [*request*]]
             [noir.session :as session]
             [noir.response :refer [json]]
@@ -78,61 +79,79 @@
        (let [~'_routes ~name]
          ~@body)))
 
-(defmacro defhandler-meta [meta name args & body]
+;;;; validate fn 规范
+;;;;  (validate-fn (:params *request*)) => {:user ["error1"]}
+(defn- with-validates [validates-fn failture success]
+  [`(let [~'find (atom  false)
+          ~'fs (atom ~validates-fn)
+          ~'ret (atom nil)
+          ~'p (:params *request*)]
+      (while (and (not @~'find)
+                  (not (empty? @~'fs)))
+        (let [~'f (first @~'fs)
+              ~'r (~'f ~'p)]
+          (if-not (empty? ~'r)
+            (do (reset! ~'find true) (reset! ~'ret ~'r))
+            (do (reset! ~'fs (next @~'fs))))))
+      (if-not (empty? @~'ret)
+        (do
+          (flash-msg (failture-message "验证错误" @~'ret))
+          (flash-post-params ~'p)
+          ~failture)
+        (do ~@success)))])
+
+(defn- m-handler [name args validates-fn failture body]
+ `(defn ~name [~'req]
+    (let [{:keys ~args :or {~'req ~'req}} (:params ~'req)]
+      ~@(if validates-fn
+         (with-validates validates-fn failture body)
+         body))))
+
+(defn- m-method [method path handler]
+  (case method
+    :get `(GET ~path ~'req ~handler)
+    :post `(POST ~path ~'req ~handler)
+    :delete `(DELETE ~path ~'req ~handler)
+    :put `(PUT ~path  ~'req ~handler)
+    :head `(HEAD ~path  ~'req ~handler)
+    :options `(OPTIONS ~path  ~'req ~handler)
+    :patch `(PATCH ~path  ~'req ~handler)
+    `(ANY ~path ~'req ~handler)))
+
+(defn- m-fc [name url perm]
+  `(def ~(symbol (str name "-fp"))
+     (new-funcpoint {:name ~name
+                     :url ~url
+                     :perm ~perm})))
+
+(defn- m-routes [name path meta]
   `(do
-     (route-one/defroute ~name ~(:path meta))
-     (if ~(:fp-name meta)
-       (def ~(symbol (str name "-fp"))
-         (new-funcpoint {:name ~(:fp-name meta)
-                         :url ~(:path meta)
-                         :perm ~(:perm meta)})))
-     (defn ~name [~'req]
-       (let [{:keys ~args :or {~'req ~'req}} (:params ~'req)]
-         ~@body))
-     (swap! ~'_routes conj
-            (case ~(:method meta)
-              :get (GET ~(:path meta) ~'req ~name)
-              :post (POST ~(:path meta) ~'req ~name)
-              :delete (DELETE ~(:path meta) ~'req ~name)
-              :put (PUT ~(:path meta) ~'req ~name)
-              (ANY ~(:path meta) ~'req ~name)))
-     ))
+     (route-one/defroute ~name ~path)
+     ~(when (:fp-name meta)
+        (m-fc name path (:perm meta)))
+     (swap! ~'_routes conj ~(m-method (:method meta) path name))))
+
+(defmacro defhandler
+  "define handler"
+  {:arglists '([name doc-string? attr-map? [params*] body])}
+  [name & args]
+  (let [[name attrs] (name-with-attributes name args)
+        meta         (meta name)
+        path         (:path meta)
+        validates-fn (:validates-fn meta)
+        failture     (or (:failture meta) #(throw (Exception. "validate error")))
+        args         (first attrs)
+        body         (next attrs)]
+    `(do
+       ~(m-handler name args validates-fn failture body)
+       ~(if path (m-routes name path meta)))))
 
 ;;@see http://blog.fnil.net/index.php/archives/27
-(defmacro defhandler
+#_(defmacro defhandler
   [name args & body]
   `(defn ~name [~'req]
      (let [{:keys ~args :or {~'req ~'req}} (:params ~'req)]
        ~@body)))
-
-;;;; validate fn 规范
-;;;;  (validate-fn (:params *request*)) => {:user ["error1"]}
-(defmacro with-validates [validates-fn success failture]
-  `(let [~'find (atom  false)
-         ~'fs (atom ~validates-fn)
-         ~'ret (atom nil)
-         ~'p (:params *request*)]
-     (while (and (not @~'find)
-                 (not (empty? @~'fs)))
-       (let [~'f (first @~'fs)
-             ~'r (~'f ~'p)]
-         (if-not (empty? ~'r)
-           (do (reset! ~'find true) (reset! ~'ret ~'r))
-           (do (reset! ~'fs (next @~'fs))))))
-     (if-not (empty? @~'ret)
-       (do
-         (flash-msg (failture-message "验证错误" @~'ret))
-         (flash-post-params ~'p)
-         ~failture)
-       ~success)))
-
-(defmacro defhandler-with-validates
-  [handler args validates-fn &
-   {:keys [success failture]
-    :or {failture
-         #(throw (Exception. "validate error"))}}]
-  `(defhandler ~handler [~@args]
-     (with-validates ~validates-fn ~success ~failture)))
 
 ;;; for template
 (defn render-string

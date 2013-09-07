@@ -50,7 +50,7 @@
 (defn init
   "服务器初始化入口"
   []
-  (init-app-module!)
+  #_(init-app-module!)
   (info ">>Server start! Run mode: " run-mode))
 
 (defn start-server

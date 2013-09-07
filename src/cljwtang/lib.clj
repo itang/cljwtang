@@ -70,9 +70,6 @@
   appdata-dir]
 
  [cljwtang.core
-  #_(name sort)
-  #_(init)
-  description
   new-ui-module
   new-bootstrap-task
   new-funcpoint
@@ -81,7 +78,8 @@
   maps->menus
   menu-tree
   #_(new-app-module)
-  app-module
+  get-app-module
+  create-app
   app-sub-modules
   regist-modules!
   init-app-module!

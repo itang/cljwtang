@@ -35,11 +35,10 @@
   (apply routes (app-routes))
   (GET "/_lib_version" [] version)
   (route/resources "/public")
-  (route/not-found (delay *not-found-content*)))
+  (route/not-found (fn [_] (get-not-found-content))))
 
 (def ^:private intern-app
   (-> full-app-routes
-    (wrap-delay)
     (wrap-exception-handling exception-handle)
     (wrap-i18n-middleware)))
 

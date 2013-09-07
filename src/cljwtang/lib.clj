@@ -35,13 +35,13 @@
   ]
 
  [ring.util.response
-  not-found
-  status]
+  not-found]
 
  [noir.response
   json
   content-type
-  redirect]
+  redirect
+  status]
 
  [noir.util.middleware
   app-handler]
@@ -81,6 +81,7 @@
   *current-user-fn*
   *db-config*
   *not-found-content*
+  get-not-found-content
   set-user-logined?-fn!
   set-app-config-fn!
   set-current-user-fn!
@@ -88,8 +89,7 @@
   set-not-found-content!]
 
  [cljwtang.web.core
-  message json-message success-message json-success-message failture-message
-  json-failture-message error-message json-error-message info-message json-info-message
+  message success-message failture-message error-message info-message 
   flash-msg
   flash-post-params
   postback-params
@@ -102,7 +102,8 @@
   ajax?]
 
  [cljwtang.web.response
-  html content-length]
+  html content-length
+  json-message json-success-message json-failture-message json-error-message json-info-message]
 
  [cljwtang.web.view
   template
@@ -114,7 +115,6 @@
   wrap-request-log
   wrap-dev-helper
   wrap-profile
-  wrap-delay
   wrap-exception-handling ]
 
  [cljwtang.utils.env

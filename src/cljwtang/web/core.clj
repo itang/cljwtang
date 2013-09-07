@@ -3,12 +3,10 @@
             [compojure.core :refer :all]
             [noir.request :refer [*request*]]
             [noir.session :as session]
-            [noir.response :refer [json]]
             [clojurewerkz.route-one.core :as route-one]
             [cljwtang.core :as core :refer [template-engine new-funcpoint]]
             [cljwtang.template.core :as template]
             [cljwtang.utils.env :as env]))
-
 (defn message
   "消息map"
   [success pmessage & [data detailMessage ptype]]
@@ -22,92 +20,86 @@
      :detailMessage detailMessage
      :type ptype}))
 
-(def ^{:doc "消息map -> JSON"}
-  json-message (comp json message))
-
 (defn success-message
   "success消息map"
   [pmessage & [data detailMessage]]
   (message true pmessage data detailMessage))
-
-(def ^{:doc "success消息map -> JSON"}
-  json-success-message (comp json success-message))
 
 (defn failture-message
   "failture消息map"
   [pmessage & [data detailMessage]]
   (message false pmessage data detailMessage))
 
-(def ^{:doc "failture消息map -> JSON"}
-  json-failture-message (comp json failture-message))
-
 (def ^{:doc "error消息map"}
   error-message failture-message)
-
-(def ^{:doc "error消息map -> JSON"}
-  json-error-message (comp json error-message))
 
 (defn info-message
   "info消息map"
   [pmessage & [data detailMessage]]
   (message true pmessage data detailMessage :info))
 
-(def ^{:doc "info消息map -> JSON"}
-  json-info-message (comp json info-message))
-
 (defn flash-msg
   "获取或设置flash msg"
   ([]
-    (session/flash-get :msg))
+     (session/flash-get :msg))
   ([msg]
-    (session/flash-put! :msg msg)))
+     (session/flash-put! :msg msg)))
 
 (defn flash-post-params
   "获取或设置flash post params"
   ([]
-    (session/flash-get :post-params))
+     (session/flash-get :post-params))
   ([msg]
-    (session/flash-put! :post-params msg)))
+     (session/flash-put! :post-params msg)))
 
 (defn postback-params
   "收集参数(来自请求参数和本页面post提交的)"
   []
   (merge (:params *request*) (flash-post-params)))
 
-(defmacro with-routes [name & body]
+(defmacro with-routes [name context-path & body]
   `(do (def ~name (atom []))
-       (let [~'_routes ~name]
+       (let [~'_routes ~name
+             ~'_context-path ~context-path]
          ~@body)))
+
+(defn -un-quote [x]
+  (if (and (seq? x)
+           (= 'quote (first x)))
+    (fnext x)
+    x))
 
 ;;;; validate fn 规范
 ;;;;  (validate-fn (:params *request*)) => {:user ["error1"]}
 (defn- with-validates [validates-fn failture success]
-  [`(let [~'find (atom  false)
-          ~'fs (atom ~validates-fn)
-          ~'ret (atom nil)
-          ~'p (:params *request*)]
-      (while (and (not @~'find)
-                  (not (empty? @~'fs)))
-        (let [~'f (first @~'fs)
-              ~'r (~'f ~'p)]
-          (if-not (empty? ~'r)
-            (do (reset! ~'find true) (reset! ~'ret ~'r))
-            (do (reset! ~'fs (next @~'fs))))))
-      (if-not (empty? @~'ret)
-        (do
-          (flash-msg (failture-message "验证错误" @~'ret))
-          (flash-post-params ~'p)
-          ~failture)
-        (do ~@success)))])
+  (let [failture (-un-quote failture)
+        validates-fn (-un-quote validates-fn)]
+    [`(let [~'find (atom  false)
+            ~'fs (atom ~validates-fn)
+            ~'ret (atom nil)
+            ~'p (:params *request*)]
+        (while (and (not @~'find)
+                    (not (empty? @~'fs)))
+          (let [~'f (first @~'fs)
+                ~'r (~'f ~'p)]
+            (if-not (empty? ~'r)
+              (do (reset! ~'find true) (reset! ~'ret ~'r))
+              (do (reset! ~'fs (next @~'fs))))))
+        (if-not (empty? @~'ret)
+          (do
+            (flash-msg (failture-message "验证错误" @~'ret))
+            (flash-post-params ~'p)
+            ~failture)
+          (do ~@success)))]))
 
-(defn- m-handler [name args validates-fn failture body]
- `(defn ~name [~'req]
-    (let [{:keys ~args :or {~'req ~'req}} (:params ~'req)]
-      ~@(if validates-fn
-         (with-validates validates-fn failture body)
-         body))))
+(defn- make-handler [name args validates-fn failture body]
+  `(defn ~name [~'req]
+     (let [{:keys ~args :or {~'req ~'req}} (:params ~'req)]
+       ~@(if validates-fn
+           (with-validates validates-fn failture body)
+           body))))
 
-(defn- m-method [method path handler]
+(defn- make-compojure-route [method path handler]
   (case method
     :get `(GET ~path ~'req ~handler)
     :post `(POST ~path ~'req ~handler)
@@ -118,18 +110,19 @@
     :patch `(PATCH ~path  ~'req ~handler)
     `(ANY ~path ~'req ~handler)))
 
-(defn- m-fc [name url perm]
+(defn- make-funcpoint [name url perm]
   `(def ~(symbol (str name "-fp"))
      (new-funcpoint {:name ~name
                      :url ~url
                      :perm ~perm})))
 
-(defn- m-routes [name path meta]
-  `(do
-     (route-one/defroute ~name ~path)
-     ~(when (:fp-name meta)
-        (m-fc name path (:perm meta)))
-     (swap! ~'_routes conj ~(m-method (:method meta) path name))))
+(defn- make-routes [name path meta]
+  (let [p (gensym)]
+  `(let [~p (str ~'_context-path ~path)]
+      (route-one/defroute ~name ~p)
+      ~(when (:fp-name meta)
+         (make-funcpoint name p (:perm meta)))
+      (swap! ~'_routes conj ~(make-compojure-route (:method meta) p name)))))
 
 (defmacro defhandler
   "define handler"
@@ -143,15 +136,16 @@
         args         (first attrs)
         body         (next attrs)]
     `(do
-       ~(m-handler name args validates-fn failture body)
-       ~(if path (m-routes name path meta)))))
+       ~(make-handler name args validates-fn failture body)
+       ~(when path
+          (make-routes name path meta)))))
 
 ;;@see http://blog.fnil.net/index.php/archives/27
 #_(defmacro defhandler
-  [name args & body]
-  `(defn ~name [~'req]
-     (let [{:keys ~args :or {~'req ~'req}} (:params ~'req)]
-       ~@body)))
+    [name args & body]
+    `(defn ~name [~'req]
+       (let [{:keys ~args :or {~'req ~'req}} (:params ~'req)]
+         ~@body)))
 
 ;;; for template
 (defn render-string

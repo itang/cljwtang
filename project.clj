@@ -58,6 +58,7 @@
                  [selmer "0.4.2"]                     ; A fast, Django inspired
                  [lib-noir "0.6.9"]                   ; middleware
                  [clojurewerkz/route-one "1.0.0-rc2"] ; generates HTTP resource routes
+                 [ring-anti-forgery "0.3.0"]          ; prevents CSRF attacks
 
                  [com.h2database/h2 "1.3.173"]        ; H2 Driver
                  [postgresql "9.1-901-1.jdbc4"]       ; PostgreSQL Driver

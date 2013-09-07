@@ -7,6 +7,7 @@
             [taoensso.tower :as tower]
             [korma.db :refer [defdb h2]]
             [clojure.tools.nrepl.server :as nrepl-server]
+            [ring.util.anti-forgery :refer [anti-forgery-field]]
             [cljwtang.utils.env :as env]
             [cljwtang.template.core :as template]
             [cljwtang.template.selmer :as selmer]
@@ -332,7 +333,12 @@
                           :chan-active
                           (fn [args context]
                             (when (= (first args) (:channel context))
-                              "active"))))
+                              "active")))
+  (log/info "regist-helper anti-forgery-field")
+  (template/regist-helper template-engine
+                          :anti-forgery-field
+                          (fn [args context]
+                            (anti-forgery-field))))
 
 (defn- cljwtang-view-module []
   (new-ui-module

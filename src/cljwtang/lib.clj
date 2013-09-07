@@ -2,7 +2,8 @@
   (:require potemkin)
   (:require [clojure.tools.logging]
             [pandect.core]
-            [ring.util.response]
+            [ring.util response anti-forgery]
+            [ring.middleware.anti-forgery]
             [compojure core]
             [clojurewerkz.route-one.core]
             [noir response session]
@@ -25,6 +26,15 @@
   sha1-file
   sha1-hmac]
 
+ [ring.util.response
+  not-found]
+ 
+ [ring.util.anti-forgery
+  anti-forgery-field]
+
+ [ring.middleware.anti-forgery
+  wrap-anti-forgery]
+
  [compojure.core
   defroutes
   context
@@ -39,9 +49,6 @@
   with-base-url
   #_(route)
   ]
-
- [ring.util.response
-  not-found]
 
  [noir.response
   json

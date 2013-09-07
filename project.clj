@@ -4,14 +4,15 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.5.1"]
-                 [org.clojure/core.async "0.1.0-SNAPSHOT"]
-
                  ;;[org.clojure/clojurescript "0.0-1586"]
+
+                 [org.clojure/core.async "0.1.0-SNAPSHOT"]
                  [org.clojure/core.incubator "0.1.3"]
                  [org.clojure/core.memoize "0.5.6"]
                  [org.clojure/core.match "0.2.0-rc5"]
-                 [org.clojure/tools.nrepl "0.2.3"]
                  [org.clojure/core.typed "0.2.4"]
+                 [org.clojure/tools.nrepl "0.2.3"]
+                 [org.clojure/tools.macro "0.1.2"]
 
                  [cljtang "0.1.2-SNAPSHOT"]
                  [clj-pretty-format "0.1.1"]
@@ -19,7 +20,7 @@
                  [potemkin "0.3.3"]
 
                  [commons-codec/commons-codec "1.8"]
-                 [com.lambdaworks/scrypt "1.4.0"]       ; scrypt
+                 [com.lambdaworks/scrypt "1.4.0"]     ; scrypt
 
                  [coercer "0.2.0"]                    ; conv types
                  [environ "0.4.0"]                    ; managing environment setting
@@ -27,6 +28,7 @@
                  [me.raynes/fs "1.4.5"]               ; file system
                  ;;[cc.qbits/tardis "0.3.1"]            ; UUID
                  [crypto-random "1.1.0"]              ; crypto
+                 [pandect "0.3.0"]                    ; digest
                  ;;[clj-time "0.5.0"]                   ; date time
                  ;;[markdown-clj "0.9.19"]              ; markdown
                  ;;[crouton "0.1.1"]                    ; jsoup html
@@ -53,9 +55,7 @@
                  ;;[com.cemerick/friend "0.1.5"
                  ;;:exclusions [ring/ring-core]]      ; authentication
                  [compojure "1.1.5"]                  ; web framework
-                 ;;[stencil "0.3.2"]                    ; mustache template
                  [selmer "0.4.2"]                     ; A fast, Django inspired
-                 ;;[hbs "0.4.1"]                        ; handlebars template
                  [lib-noir "0.6.9"]                   ; middleware
                  [clojurewerkz/route-one "1.0.0-rc2"] ; generates HTTP resource routes
 
@@ -63,8 +63,7 @@
                  [postgresql "9.1-901-1.jdbc4"]       ; PostgreSQL Driver
                  [org.clojure/java.jdbc "0.2.3"]      ; java jdbc
                  [korma "0.3.0-RC5"]                  ; DB
-                 ;;[lobos "1.0.0-beta1"]                ; migrations
-                 [me.itang/lobos "1.0.0-beta1"]
+                 [me.itang/lobos "1.0.0-beta1"]       ; migrations
 
                  ;;[clojurewerkz/elastisch "1.1.0-rc1"] ; ElasticSearch
                  ;;[com.taoensso/carmine "1.7.0-beta2"] ; redis

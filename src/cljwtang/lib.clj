@@ -1,6 +1,7 @@
 (ns cljwtang.lib
   (:require potemkin)
   (:require [clojure.tools.logging]
+            [pandect.core]
             [ring.util.response]
             [compojure core]
             [clojurewerkz.route-one.core]
@@ -18,6 +19,11 @@
 
  [clojure.tools.logging
   debug info warn error]
+ 
+ [pandect.core
+  sha1
+  sha1-file
+  sha1-hmac]
 
  [compojure.core
   defroutes

@@ -1,12 +1,14 @@
 (ns cljwtang.web.core
   (:require [clojure.tools.macro :refer [name-with-attributes]]
             [compojure.core :refer :all]
+            [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
             [noir.request :refer [*request*]]
             [noir.session :as session]
             [clojurewerkz.route-one.core :as route-one]
             [cljwtang.core :as core :refer [template-engine new-funcpoint]]
             [cljwtang.template.core :as template]
             [cljwtang.utils.env :as env]))
+
 (defn message
   "消息map"
   [success pmessage & [data detailMessage ptype]]
@@ -92,13 +94,19 @@
             ~failture)
           (do ~@success)))]))
 
-(defn- make-handler [name args validates-fn failture body]
-  `(defn ~name [~'req]
-     (let [{:keys ~args :or {~'req ~'req}} (:params ~'req)]
-       ~@(if validates-fn
-           (with-validates validates-fn failture body)
-           body))))
-
+(defn- make-handler [name args validates-fn failture body meta]
+  (let [anti-forgery
+        (or (:anti-forgery meta) false)
+        handler-fn 
+        `(fn [~'req]
+           (let [{:keys ~args :or {~'req ~'req}} (:params ~'req)]
+             ~@(if validates-fn
+                 (with-validates validates-fn failture body)
+                 body)))]
+    `(def ~name ~(if anti-forgery
+                   `(wrap-anti-forgery ~handler-fn)
+                   handler-fn))))
+ 
 (defn- make-compojure-route [method path handler]
   (case method
     :get `(GET ~path ~'req ~handler)
@@ -110,18 +118,19 @@
     :patch `(PATCH ~path  ~'req ~handler)
     `(ANY ~path ~'req ~handler)))
 
-(defn- make-funcpoint [name url perm]
+(defn- make-funcpoint [name fp-name url perm]
   `(def ~(symbol (str name "-fp"))
-     (new-funcpoint {:name ~name
+     (new-funcpoint {:name ~fp-name
                      :url ~url
                      :perm ~perm})))
 
 (defn- make-routes [name path meta]
-  (let [p (gensym)]
+  (let [p (gensym)
+        fp-name (:fp-name meta)]
   `(let [~p (str ~'_context-path ~path)]
       (route-one/defroute ~name ~p)
-      ~(when (:fp-name meta)
-         (make-funcpoint name p (:perm meta)))
+      ~(when fp-name
+         (make-funcpoint name fp-name p (:perm meta)))
       (swap! ~'_routes conj ~(make-compojure-route (:method meta) p name)))))
 
 (defmacro defhandler
@@ -136,7 +145,7 @@
         args         (first attrs)
         body         (next attrs)]
     `(do
-       ~(make-handler name args validates-fn failture body)
+       ~(make-handler name args validates-fn failture body meta)
        ~(when path
           (make-routes name path meta)))))
 

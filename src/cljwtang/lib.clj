@@ -6,7 +6,7 @@
             [ring.middleware.anti-forgery]
             [compojure core]
             [clojurewerkz.route-one.core]
-            [noir response session]
+            [noir request response session]
             [noir.util.middleware]
 
             [cljwtang.core]
@@ -50,6 +50,9 @@
   #_(route)
   ]
 
+ [noir.request
+  *request*]
+  
  [noir.response
   json
   content-type

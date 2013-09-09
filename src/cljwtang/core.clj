@@ -2,6 +2,7 @@
   (:refer-clojure :exclude [name sort])
   (:require [clojure.java.io :as io]
             [clojure.tools.logging :as log]
+            [bultitude.core :as bultitude]
             [cljtang.core :refer :all]
             [taoensso.tower :as tower]
             [korma.db :refer [defdb h2]]
@@ -183,16 +184,31 @@
    {:name "cljwtang-view"
     :init (fn [m] (cljwtang-view-init))}))
 
+;; TODO 发现模块定义的规则
+;; 支持排序
+(defn- auto-scan-modules []
+  (let [ms (->> (bultitude/namespaces-on-classpath)
+            (filter #(.endsWith (str %) ".module")))]
+    (log/info "auto scan modules:" ms)
+    (doseq [m ms]
+      (require m)) ;; load
+    (map  #(-> (ns-publics %)
+             (get 'module)
+             (var-get)) ms)))
+
 (defn create-app [init]
   (set-app-module!
     (new-app-module
       "cljwtang"
       "cljwtang web app"
       (fn [m]
+        (log/info "regist builtin modules...")
         (regist-modules!
           (tower-module)
           (nrepl-module)
           (cljwtang-view-module))
+        (log/info "regist app modules...")
+        (apply regist-modules! (auto-scan-modules))
         (init))
       (fn [m] (load-snippets (types/snippets-ns *app-module*)))))
   (init-app-module!))

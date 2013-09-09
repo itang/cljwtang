@@ -13,6 +13,8 @@
                  [org.clojure/core.typed "0.2.4"]
                  [org.clojure/tools.nrepl "0.2.3"]
                  [org.clojure/tools.macro "0.1.2"]
+                 ;[org.clojure/tools.namespace "0.2.4"]
+                 [bultitude "0.2.2"]                  ;find Clojure namespaces on the classpath
 
                  [cljtang "0.1.2-SNAPSHOT"]
                  [clj-pretty-format "0.1.1"]

@@ -1,6 +1,6 @@
 (ns cljwtang.lib
   (:require potemkin)
-  (:require [clojure.tools.logging]
+  (:require [clojure.tools.logging :as log]
             [pandect.core]
             [ring.util response anti-forgery]
             [ring.middleware.anti-forgery]
@@ -16,11 +16,14 @@
 
 (potemkin/import-vars
  [potemkin
-  import-vars]
+  import-vars
+  import-fn
+  import-macro
+  import-def]
 
  [clojure.tools.logging
   debug info warn error]
- 
+
  [pandect.core
   sha1
   sha1-file
@@ -28,7 +31,7 @@
 
  [ring.util.response
   not-found]
- 
+
  [ring.util.anti-forgery
   anti-forgery-field]
 
@@ -52,7 +55,7 @@
 
  [noir.request
   *request*]
-  
+
  [noir.response
   json
   content-type
@@ -103,7 +106,7 @@
   set-not-found-content!]
 
  [cljwtang.web.core
-  message success-message failture-message error-message info-message 
+  message success-message failture-message error-message info-message
   flash-msg
   flash-post-params
   postback-params
@@ -149,7 +152,9 @@
  [cljwtang.utils.upload
   upload-file])
 
-(defn session-remove!
-  "remove session data"
-  [k]
-  (noir.session/remove! k))
+(import-macro log/debug log-debug)
+(import-macro log/info log-info)
+(import-macro log/warn log-warn)
+(import-macro log/error log-error)
+
+(import-fn noir.session/remove! session-remove!)

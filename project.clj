@@ -14,12 +14,14 @@
                  [org.clojure/tools.nrepl "0.2.3"]
                  [org.clojure/tools.macro "0.1.2"]
                  ;[org.clojure/tools.namespace "0.2.4"]
-                 [bultitude "0.2.2"]                  ;find Clojure namespaces on the classpath
 
+                 [bultitude "0.2.2"]                  ;find Clojure namespaces on the classpath
+                 [potemkin "0.3.3"]
+                 ;;[prismatic/schema "0.1.1"]
+                 ;;[prismatic/plumbing "0.1.0"]
+                 
                  [cljtang "0.1.2-SNAPSHOT"]
                  [clj-pretty-format "0.1.1"]
-                 ;;[prismatic/plumbing "0.1.0"]
-                 [potemkin "0.3.3"]
 
                  [commons-codec/commons-codec "1.8"]
                  [com.lambdaworks/scrypt "1.4.0"]     ; scrypt

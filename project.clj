@@ -49,7 +49,6 @@
                                               com.sun.jdmk/jmxtools
                                               com.sun.jmx/jmxri]]
 
-                 [metis "0.3.3"]                      ; validate data
                  ;;[clj-rss "0.1.2"]                    ; rss
                  ;;[clojurewerkz/quartzite "1.1.0"]     ; Scheduling
                  ;;[clj-http "0.6.4"]                   ; http client

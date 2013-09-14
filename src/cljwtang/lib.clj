@@ -6,9 +6,8 @@
             [ring.middleware.anti-forgery]
             [compojure core]
             [clojurewerkz.route-one.core]
-            [noir request response session]
+            [noir request response session validation]
             [noir.util.middleware]
-
             [cljwtang.core]
             [cljwtang.config.app]
             [cljwtang.web core request response view middleware]
@@ -61,6 +60,21 @@
   content-type
   redirect
   status]
+ 
+ [noir.validation
+  wrap-noir-validation
+  has-value?
+  has-values?
+  #_(not-nil?)
+  min-length?
+  max-length?
+  matches-regex?
+  is-email?
+  valid-file?
+  valid-number?
+  greater-than?
+  less-than?
+  equal-to?]
 
  [noir.util.middleware
   app-handler]
@@ -116,7 +130,8 @@
   clear-template-cache!]
 
  [cljwtang.web.request
-  ajax?]
+  ajax?
+  reuqest-params]
 
  [cljwtang.web.response
   html content-length
@@ -158,3 +173,11 @@
 (import-macro log/error log-error)
 
 (import-fn noir.session/remove! session-remove!)
+
+(import-fn noir.validation/get-errors validate-get-errors)
+(import-fn noir.validation/set-error validate-set-error)
+(import-fn noir.validation/rule validate-rule)
+(import-fn noir.validation/errors? validate-errors?)
+(import-fn noir.validation/on-error validate-on-error)
+(import-def noir.validation/*errors* *validate-errors*)
+

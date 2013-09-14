@@ -4,6 +4,7 @@
             [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
             [noir.request :refer [*request*]]
             [noir.session :as session]
+            [noir.validation]
             [clojurewerkz.route-one.core :as route-one]
             [cljwtang.core :as core :refer [template-engine new-funcpoint]]
             [cljwtang.template.core :as template]
@@ -73,36 +74,27 @@
 
 ;;;; validate fn 规范
 ;;;;  (validate-fn (:params *request*)) => {:user ["error1"]}
-(defn- with-validates [validates-fn failture success]
-  (let [failture (-un-quote failture)
-        validates-fn (-un-quote validates-fn)]
-    [`(let [~'find (atom  false)
-            ~'fs (atom ~validates-fn)
-            ~'ret (atom nil)
-            ~'p (:params *request*)]
-        (while (and (not @~'find)
-                    (not (empty? @~'fs)))
-          (let [~'f (first @~'fs)
-                ~'r (~'f ~'p)]
-            (if-not (empty? ~'r)
-              (do (reset! ~'find true) (reset! ~'ret ~'r))
-              (do (reset! ~'fs (next @~'fs))))))
-        (if-not (empty? @~'ret)
+(defn- with-validates [validation success]
+  (let [on-error (-un-quote (or (:on-error validation) #(throw (Exception. "validate error"))))
+        validate (-un-quote (:validate validation))]
+    [`(do
+        ~validate
+        (if (noir.validation/errors?)
           (do
-            (flash-msg (failture-message "验证错误" @~'ret))
-            (flash-post-params ~'p)
-            ~failture)
+            (flash-msg (failture-message "验证错误" @noir.validation/*errors*))
+            (flash-post-params (:params *request*))
+            ~on-error)
           (do ~@success)))]))
 
-(defn- make-handler [name args validates-fn failture body meta]
-  (let [anti-forgery
-        (or (:anti-forgery meta) false)
-        handler-fn 
-        `(fn [~'req]
-           (let [{:keys ~args :or {~'req ~'req}} (:params ~'req)]
-             ~@(if validates-fn
-                 (with-validates validates-fn failture body)
-                 body)))]
+;;@see http://blog.fnil.net/index.php/archives/27
+(defn- make-handler [name args body meta]
+  (let [validation (:validation meta)
+        anti-forgery (or (:anti-forgery meta) false)
+        handler-fn `(fn [~'req]
+                      (let [{:keys ~args :or {~'req ~'req}} (:params ~'req)]
+                        ~@(if validation
+                            (with-validates validation body)
+                            body)))]
     `(def ~name ~(if anti-forgery
                    `(wrap-anti-forgery ~handler-fn)
                    handler-fn))))
@@ -140,21 +132,12 @@
   (let [[name attrs] (name-with-attributes name args)
         meta         (meta name)
         path         (:path meta)
-        validates-fn (:validates-fn meta)
-        failture     (or (:failture meta) #(throw (Exception. "validate error")))
         args         (first attrs)
         body         (next attrs)]
     `(do
-       ~(make-handler name args validates-fn failture body meta)
+       ~(make-handler name args body meta)
        ~(when path
           (make-routes name path meta)))))
-
-;;@see http://blog.fnil.net/index.php/archives/27
-#_(defmacro defhandler
-    [name args & body]
-    `(defn ~name [~'req]
-       (let [{:keys ~args :or {~'req ~'req}} (:params ~'req)]
-         ~@body)))
 
 ;;; for template
 (defn render-string

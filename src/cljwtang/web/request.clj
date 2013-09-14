@@ -1,4 +1,8 @@
-(ns cljwtang.web.request)
+(ns cljwtang.web.request
+  (:require [noir.request]))
+
+(defn reuqest-params []
+  (:params noir.request/*request*))
 
 (defn ajax? [req]
   (= "XMLHttpRequest"

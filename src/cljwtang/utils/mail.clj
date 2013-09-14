@@ -21,7 +21,7 @@
   "发送邮件(使用默认服务器配置)."
   [msg template-name ctx & more]
   (let [msg (merge {:body [{:type  "text/html; charset=utf-8"
-                            :content (view/view template-name ctx)}]}
+                            :content (view/template template-name ctx)}]}
                    msg)]
     (apply send-mail msg more)))
 

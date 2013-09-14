@@ -61,39 +61,36 @@
   (merge (:params *request*) (flash-post-params)))
 
 (defmacro with-routes [name context-path & body]
-  `(do (def ~name (atom []))
-       (let [~'_routes ~name
-             ~'_context-path ~context-path]
-         ~@body)))
+  `(let [~'_routes (atom [])
+         ~'_context-path ~context-path]
+     ~@body
+     (def ~name @~'_routes)))
 
 (defn -un-quote [x]
-  (if (and (seq? x)
-           (= 'quote (first x)))
+  (if (and (seq? x) (= 'quote (first x)))
     (fnext x)
     x))
 
-;;;; validate fn 规范
-;;;;  (validate-fn (:params *request*)) => {:user ["error1"]}
-(defn- with-validates [validation success]
-  (let [on-error (-un-quote (or (:on-error validation) #(throw (Exception. "validate error"))))
-        validate (-un-quote (:validate validation))]
+(defn- with-validates [success meta]
+  (let [validate (-un-quote (:validate meta))
+        on-validate-error (-un-quote (or (:on-validate-error meta)
+                                         #(throw (Exception. "validate error"))))]
     [`(do
         ~validate
         (if (noir.validation/errors?)
           (do
             (flash-msg (failture-message "验证错误" @noir.validation/*errors*))
             (flash-post-params (:params *request*))
-            ~on-error)
+            ~on-validate-error)
           (do ~@success)))]))
 
 ;;@see http://blog.fnil.net/index.php/archives/27
 (defn- make-handler [name args body meta]
-  (let [validation (:validation meta)
-        anti-forgery (or (:anti-forgery meta) false)
+  (let [anti-forgery (or (:anti-forgery meta) false)
         handler-fn `(fn [~'req]
                       (let [{:keys ~args :or {~'req ~'req}} (:params ~'req)]
-                        ~@(if validation
-                            (with-validates validation body)
+                        ~@(if (:validate meta)
+                            (with-validates body meta)
                             body)))]
     `(def ~name ~(if anti-forgery
                    `(wrap-anti-forgery ~handler-fn)
@@ -116,14 +113,26 @@
                      :url ~url
                      :perm ~perm})))
 
-(defn- make-routes [name path meta]
-  (let [p (gensym)
-        fp-name (:fp-name meta)]
-  `(let [~p (str ~'_context-path ~path)]
-      (route-one/defroute ~name ~p)
-      ~(when fp-name
-         (make-funcpoint name fp-name p (:perm meta)))
-      (swap! ~'_routes conj ~(make-compojure-route (:method meta) p name)))))
+(defn- get-route-info [name meta]
+  (let [method (or (:method meta) (->> meta
+                                    keys
+                                    (filter #{:get :post :delete :put :head :options :patch :any})
+                                    first))
+        path (or (:path meta) (get meta method) (str "/" name))]
+    (when method
+      {:method method :path path})))
+
+(defn- make-routes [name meta]
+  (when-let [route-info (get-route-info name meta)]
+    (let [p (gensym)
+          method (:method route-info)
+          path (:path route-info)
+          fp-name (:fp-name meta)]
+    `(let [~p (str ~'_context-path ~path)]
+        (route-one/defroute ~name ~p)
+        ~(when fp-name
+           (make-funcpoint name fp-name p (:perm meta)))
+        (swap! ~'_routes conj ~(make-compojure-route method p name))))))
 
 (defmacro defhandler
   "define handler"
@@ -131,13 +140,11 @@
   [name & args]
   (let [[name attrs] (name-with-attributes name args)
         meta         (meta name)
-        path         (:path meta)
         args         (first attrs)
         body         (next attrs)]
     `(do
        ~(make-handler name args body meta)
-       ~(when path
-          (make-routes name path meta)))))
+       ~(make-routes name meta))))
 
 ;;; for template
 (defn render-string

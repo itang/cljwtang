@@ -51,10 +51,12 @@
   (parent [this] "父级"))
 
 (defrecord UiModuleRecord
-    [name description routes fps menus snippets-ns bootstrap-tasks contollers init destroy]
+    [name description sort routes fps menus snippets-ns bootstrap-tasks contollers init destroy]
   Base
   (name [_] name)
   (description [_] description)
+  Sort
+  (sort [_] sort)
   Module
   (init [this]
     (when init

@@ -38,11 +38,14 @@
 (defonce template-engine
   (selmer/new-selmer-template-engine))
 
+(def ^{:constant true} default-module-sort 100)
+
 (defn new-ui-module
   ([]
      (new-ui-module {}))
   ([m]
-     (let [es-keys
+     (let [m (merge {:sort default-module-sort} m)
+           es-keys
            [:routes :fps :menus :snippets-ns :bootstrap-tasks :contollers]
            m
            (loop [r m keys es-keys]
@@ -184,17 +187,21 @@
    {:name "cljwtang-view"
     :init (fn [m] (cljwtang-view-init))}))
 
-;; TODO 发现模块定义的规则
-;; 支持排序
-(defn- auto-scan-modules []
+(defn- auto-scan-modules
+  "扫描获取所有应用模块
+   规则: (var-get 'prefixns.module/module)"
+  []
   (let [ms (->> (bultitude/namespaces-on-classpath)
             (filter #(.endsWith (str %) ".module")))]
     (log/info "auto scan modules:" ms)
     (doseq [m ms]
       (require m)) ;; load
-    (map  #(-> (ns-publics %)
-             (get 'module)
-             (var-get)) ms)))
+    (let [modules (map #(-> (ns-publics %)
+                          (get 'module)
+                          (var-get)) ms)
+          sorted-modules (sort-by types/sort modules)]
+      (log/info "sorted app modules:" (map types/name sorted-modules))
+      sorted-modules)))
 
 (defn create-app [init]
   (set-app-module!

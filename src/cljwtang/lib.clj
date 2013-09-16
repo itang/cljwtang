@@ -165,7 +165,10 @@
   verify]
 
  [cljwtang.utils.upload
-  upload-file])
+  upload-file!
+  multipart-files
+  has-multipart-files
+  multipart-file])
 
 (import-macro log/debug log-debug)
 (import-macro log/info log-info)

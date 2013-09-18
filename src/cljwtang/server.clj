@@ -6,7 +6,7 @@
             [org.httpkit.server :as httpkit])
   (:require [cljwtang.lib :refer :all]))
 
-(defn- exception-handle
+(defn- default-exception-handle
   "统一异常处理"
   [req exception]
   (let [msg "系统出错了!"
@@ -39,7 +39,7 @@
 
 (def ^:private intern-app
   (-> full-app-routes
-    (wrap-exception-handling exception-handle)
+    (wrap-exception-handling (or *exception-handle-fn* default-exception-handle))
     (wrap-i18n-middleware)))
 
 (def ^{:doc "app handler"} app

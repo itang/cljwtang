@@ -24,6 +24,8 @@
 
 (defdynamic current-user-fn (constantly nil))
 
+(defdynamic ^{:doc "异常处理"} exception-handle-fn nil)
+
 (defdynamic db-config
   (h2 {:subname "~/cljwtang_dev;AUTO_SERVER=TRUE"
        :user "sa"

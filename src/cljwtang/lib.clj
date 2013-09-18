@@ -124,12 +124,14 @@
   *current-user-fn*
   *db-config*
   *not-found-content*
+  *exception-handle-fn*
   get-not-found-content
   set-user-logined?-fn!
   set-app-config-fn!
   set-current-user-fn!
   set-db-config!
-  set-not-found-content!]
+  set-not-found-content!
+  set-exception-handle-fn!]
 
  [cljwtang.web.core
   message success-message failture-message error-message info-message

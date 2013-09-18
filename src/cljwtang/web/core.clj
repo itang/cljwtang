@@ -12,16 +12,16 @@
 
 (defn message
   "消息map"
-  [success pmessage & [data detailMessage ptype]]
-  (let [pmessage (or pmessage "")
+  [success message & [data detailMessage type]]
+  (let [message (or message "")
         data (or data {})
         detailMessage (or detailMessage "")
-        ptype (or ptype (if success :success :error))]
+        type (or type (if success :success :error))]
     {:success success
-     :message pmessage
+     :message message
      :data data
      :detailMessage detailMessage
-     :type ptype}))
+     :type type}))
 
 (defn success-message
   "success消息map"

@@ -1,6 +1,7 @@
 (ns cljwtang.lib
   (:require potemkin)
   (:require [clojure.tools.logging :as log]
+            [plumbing core]
             [pandect.core]
             [ring.util response anti-forgery]
             [ring.middleware.anti-forgery]
@@ -22,6 +23,17 @@
 
  [clojure.tools.logging
   debug info warn error]
+
+ [plumbing.core
+  for-map
+  safe-get
+  safe-get-in
+  map-vals
+  map-keys
+  ?>
+  ?>>
+  dissoc-in
+  keywordize-map]
 
  [pandect.core
   sha1
@@ -167,7 +179,6 @@
  [cljwtang.utils.upload
   upload-file!
   multipart-files
-  has-multipart-files
   multipart-file])
 
 (import-macro log/debug log-debug)

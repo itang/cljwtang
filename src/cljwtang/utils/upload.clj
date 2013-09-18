@@ -1,5 +1,6 @@
 (ns cljwtang.utils.upload
-  (:require [me.raynes.fs :refer [copy file]]
+  (:require [plumbing.core :refer :all]
+            [me.raynes.fs :refer [copy file]]
             [cljwtang.config.app :as config]
             [noir.request :refer [*request*]]
             [noir.validation :refer [valid-file?]]))
@@ -11,24 +12,15 @@
     (copy from target)
     target))
 
-
 (defn multipart-files
+  ([]
+  (when-let [m (map-vals multipart-files (:multipart-params *request*))]
+    (if (every? nil? (vals m)) nil m)))
   ([param]
    (let [mf (get-in *request* [:multipart-params (name param)])
          files (if (sequential? mf) mf [mf])
          files (filter valid-file? files)]
-     (if (seq files) files nil)))
-  ([]
-    (->> (:multipart-params *request*)
-      (map #(let [[name mf] %]
-              [name (multipart-files name)]))
-      (into {}))))
-
-(defn has-multipart-files
-  ([param]
-   (boolean (seq (multipart-files param))))
-  ([]
-    (every? has-multipart-files (keys (:multipart-params *request*)))))
+     (when (seq files) files))))
 
 (defn multipart-file
   [param]

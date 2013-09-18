@@ -18,7 +18,7 @@
                  [bultitude "0.2.2"]                  ;find Clojure namespaces on the classpath
                  [potemkin "0.3.3"]
                  ;;[prismatic/schema "0.1.1"]
-                 ;;[prismatic/plumbing "0.1.0"]
+                 [prismatic/plumbing "0.1.0"]
                  
                  [cljtang "0.1.2-SNAPSHOT"]
                  [clj-pretty-format "0.1.1"]

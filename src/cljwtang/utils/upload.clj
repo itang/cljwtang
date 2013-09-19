@@ -14,7 +14,9 @@
 
 (defn multipart-files
   ([]
-  (when-let [m (map-vals multipart-files (:multipart-params *request*))]
+  (when-let [m (for-map [[k v] (:multipart-params *request*)]
+                        k
+                        (multipart-files k))]
     (if (every? nil? (vals m)) nil m)))
   ([param]
    (let [mf (get-in *request* [:multipart-params (name param)])

@@ -20,7 +20,7 @@
                  ;;[prismatic/schema "0.1.1"]
                  [prismatic/plumbing "0.1.0"]
                  
-                 [cljtang "0.1.2-SNAPSHOT"]
+                 [cljtang "0.1.2"]
                  [clj-pretty-format "0.1.1"]
 
                  [commons-codec/commons-codec "1.8"]

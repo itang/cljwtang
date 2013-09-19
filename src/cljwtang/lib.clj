@@ -9,6 +9,7 @@
             [clojurewerkz.route-one.core]
             [noir request response session validation]
             [noir.util.middleware]
+            [cemerick.friend]
             [cljwtang.core]
             [cljwtang.config.app]
             [cljwtang.web core request response view middleware]
@@ -90,6 +91,11 @@
 
  [noir.util.middleware
   app-handler]
+ 
+ [cemerick.friend
+  authenticated
+  authorize
+  wrap-authorize]
 
  [cljwtang.config.app
   version
@@ -125,13 +131,15 @@
   *db-config*
   *not-found-content*
   *exception-handle-fn*
+  *load-credentials-fn*
   get-not-found-content
   set-user-logined?-fn!
   set-app-config-fn!
   set-current-user-fn!
   set-db-config!
   set-not-found-content!
-  set-exception-handle-fn!]
+  set-exception-handle-fn!
+  set-load-credentials-fn!]
 
  [cljwtang.web.core
   message success-message failture-message error-message info-message
@@ -176,7 +184,8 @@
  [cljwtang.utils.scrypt
   encrypt
   check
-  verify]
+  verify
+  scrypt-credential-fn]
 
  [cljwtang.utils.upload
   upload-file!
@@ -196,4 +205,3 @@
 (import-fn noir.validation/errors? validate-errors?)
 (import-fn noir.validation/on-error validate-on-error)
 (import-def noir.validation/*errors* *validate-errors*)
-

@@ -24,6 +24,8 @@
 
 (defdynamic current-user-fn (constantly nil))
 
+(defdynamic ^{:doc "获取用户认证信息"} load-credentials-fn (constantly nil))
+
 (defdynamic ^{:doc "异常处理"} exception-handle-fn nil)
 
 (defdynamic db-config

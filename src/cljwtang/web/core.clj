@@ -1,10 +1,12 @@
 (ns cljwtang.web.core
-  (:require [clojure.tools.macro :refer [name-with-attributes]]
+  (:require [plumbing.core :refer [?> ?>>]]
+            [clojure.tools.macro :refer [name-with-attributes]]
             [compojure.core :refer :all]
             [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
             [noir.request :refer [*request*]]
             [noir.session :as session]
             [noir.validation]
+            [cemerick.friend :as friend]
             [clojurewerkz.route-one.core :as route-one]
             [cljwtang.core :as core :refer [template-engine new-funcpoint]]
             [cljwtang.template.core :as template]
@@ -84,18 +86,23 @@
             ~on-validate-error)
           (do ~@success)))]))
 
+(defn- with-authenticated [body meta]
+  [`(friend/authenticated (do ~@body))])
+
 ;;@see http://blog.fnil.net/index.php/archives/27
 (defn- make-handler [name args body meta]
-  (let [anti-forgery (or (:anti-forgery meta) false)
+  (let [anti-forgery (boolean (:anti-forgery meta))
+        validated (boolean (:validate meta))
+        authenticated (boolean (:authenticated meta))
         handler-fn `(fn [~'req]
                       (let [{:keys ~args :or {~'req ~'req}} (:params ~'req)]
-                        ~@(if (:validate meta)
-                            (with-validates body meta)
-                            body)))]
+                        ~@(-> body
+                            (?> validated with-validates meta)
+                            (?> authenticated with-authenticated meta))))]
     `(def ~name ~(if anti-forgery
                    `(wrap-anti-forgery ~handler-fn)
                    handler-fn))))
- 
+
 (defn- make-compojure-route [method path handler]
   (case method
     :get `(GET ~path ~'req ~handler)

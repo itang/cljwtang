@@ -55,8 +55,8 @@
                  ;;[com.novemberain/pantomime "1.7.0"]  ;MIME types
 
                  [ring "1.2.0"]
-                 ;;[com.cemerick/friend "0.1.5"
-                 ;;:exclusions [ring/ring-core]]      ; authentication
+                 [com.cemerick/friend "0.1.5"
+                  :exclusions [ring/ring-core]]       ; authentication
                  [compojure "1.1.5"]                  ; web framework
                  [selmer "0.4.2"]                     ; A fast, Django inspired
                  [lib-noir "0.6.9"]                   ; middleware

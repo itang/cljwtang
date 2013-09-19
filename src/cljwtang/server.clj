@@ -3,7 +3,12 @@
             [cljtang.core :refer :all]
             [compojure.route :as route]
             [taoensso.tower.ring :refer [wrap-i18n-middleware]]
-            [org.httpkit.server :as httpkit])
+            [org.httpkit.server :as httpkit]
+            [ring.util.response :as resp]
+            [hiccup.page :as h]
+            [cemerick.friend :as friend]
+            (cemerick.friend [workflows :as workflows]
+                             [credentials :as creds]))
   (:require [cljwtang.lib :refer :all]))
 
 (defn- default-exception-handle
@@ -34,11 +39,20 @@
 (defroutes full-app-routes
   (apply routes (app-routes))
   (GET "/_lib_version" [] version)
+  (GET "/login" [] (redirect "/signin"))
   (route/resources "/public")
   (route/not-found (fn [_] (get-not-found-content))))
 
 (def ^:private intern-app
   (-> full-app-routes
+    (friend/authenticate {:allow-anon? true
+                          :login-uri "/login"
+                          :default-landing-uri "/"
+                          :unauthorized-handler #(-> (h/html5 [:h2 "You do not have sufficient privileges to access " (:uri %)])
+                                                   resp/response
+                                                   (resp/status 401))
+                          :credential-fn #(scrypt-credential-fn *load-credentials-fn* %)
+                          :workflows [(workflows/interactive-form)]})
     (wrap-exception-handling (or *exception-handle-fn* default-exception-handle))
     (wrap-i18n-middleware)))
 

@@ -89,16 +89,23 @@
 (defn- with-authenticated [body meta]
   [`(friend/authenticated (do ~@body))])
 
+(defn- with-authorized [body meta]
+  (let [perm (:perm meta)
+        authorize (if (coll? perm) perm #{perm})]
+    [`(friend/authorize ~authorize (do ~@body))]))
+
 ;;@see http://blog.fnil.net/index.php/archives/27
 (defn- make-handler [name args body meta]
   (let [anti-forgery (boolean (:anti-forgery meta))
         validated (boolean (:validate meta))
         authenticated (boolean (:authenticated meta))
+        authorized (boolean (:perm meta))
         handler-fn `(fn [~'req]
                       (let [{:keys ~args :or {~'req ~'req}} (:params ~'req)]
                         ~@(-> body
                             (?> validated with-validates meta)
-                            (?> authenticated with-authenticated meta))))]
+                            (?> authenticated with-authenticated meta)
+                            (?> authorized with-authorized meta))))]
     `(def ~name ~(if anti-forgery
                    `(wrap-anti-forgery ~handler-fn)
                    handler-fn))))

@@ -1,6 +1,7 @@
 (ns cljwtang.web.core
   (:require [plumbing.core :refer [?> ?>>]]
             [clojure.tools.macro :refer [name-with-attributes]]
+            [cljtang.core :refer :all]
             [compojure.core :refer :all]
             [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
             [noir.request :refer [*request*]]
@@ -94,21 +95,16 @@
   (template/clear-cache! template-engine))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(def ^{:dynamic true} *routes* nil)
-(def ^{:dynamic true} *routes-config* nil)
+(defdynamic routes nil)
+
+(defdynamic routes-config nil)
 
 (defmacro with-routes [name opts & body]
   (let [routes-config (if (string? opts) {:path opts} opts)]
-    `(binding [*routes* (atom [])
-               *routes-config* ~routes-config]
+    (set-routes-config! routes-config)
+    `(binding [*routes* (atom [])]
        ~@body
        (def ~name (apply routes @*routes*)))))
-
-#_(defmacro with-routes [name context-path & body]
-   `(let [~'_routes (atom [])
-          ~'_context-path ~context-path]
-      ~@body
-      (def ~name @~'_routes)))
 
 (defn -un-quote [x]
   (if (and (seq? x) (= 'quote (first x)))
@@ -132,7 +128,7 @@
   [`(friend/authenticated (do ~@body))])
 
 (defn- get-prop [meta f]
-  (f (merge *routes-config* meta)))
+  (f (merge (get-routes-config) meta)))
 
 (defn- with-authorized [body perm]
   (let [authorize (if (coll? perm) perm #{perm})]
@@ -186,8 +182,9 @@
     (let [p (gensym)
           method (:method route-info)
           path (:path route-info)
+          path (str (:path (get-routes-config)) path)
           fp-name (:fp-name meta)]
-    `(let [~p (str (:path *routes-config*) ~path)]
+    `(let [~p ~path]
         (route-one/defroute ~name ~p)
         ~(when fp-name
            (make-funcpoint name fp-name p (:perm meta)))

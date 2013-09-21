@@ -101,10 +101,11 @@
 
 (defmacro with-routes [name opts & body]
   (let [routes-config (if (string? opts) {:path opts} opts)]
-    (set-routes-config! routes-config)
+    (set-routes-config! routes-config) ;; 会存在并发问题吗? 
     `(binding [*routes* (atom [])]
        ~@body
-       (def ~name (apply routes @*routes*)))))
+       (def ~name (apply routes @*routes*))
+       (set-routes-config! nil))))
 
 (defn -un-quote [x]
   (if (and (seq? x) (= 'quote (first x)))

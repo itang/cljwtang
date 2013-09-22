@@ -22,9 +22,6 @@
   import-macro
   import-def]
 
- [clojure.tools.logging
-  debug info warn error]
-
  [plumbing.core
   for-map
   safe-get

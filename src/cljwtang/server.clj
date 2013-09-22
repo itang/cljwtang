@@ -17,10 +17,10 @@
   (let [msg "系统出错了!"
         exception-info (stacktrace->string exception)
         at (moment-format)]
-    (error "Exception:" exception-info)
+    (log-error "Exception:" exception-info)
     (when prod-mode?
       (doseq [email (system-monitoring-mail-accounts)]
-        (info "send email to " email)
+        (log-info "send email to " email)
         (send-mail-by-template
          {:to email
           :subject (str "[wapp]-" at ":" msg)}
@@ -65,7 +65,7 @@
   "服务器初始化入口"
   []
   #_(init-app-module!)
-  (info ">>Server start! Run mode: " run-mode))
+  (log-info ">>Server start! Run mode: " run-mode))
 
 (defn start-server
   "启动服务器"

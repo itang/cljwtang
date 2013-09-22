@@ -10,9 +10,10 @@
                  [org.clojure/core.incubator "0.1.3"]
                  [org.clojure/core.memoize "0.5.6"]
                  [org.clojure/core.match "0.2.0-rc5"]
-                 [org.clojure/core.typed "0.2.4"]
+                 [org.clojure/core.typed "0.2.9"]
                  [org.clojure/tools.nrepl "0.2.3"]
-                 [org.clojure/tools.macro "0.1.2"]
+                 [org.clojure/tools.macro "0.1.5"]
+                 [org.clojure/tools.reader "0.7.7"]
                  ;[org.clojure/tools.namespace "0.2.4"]
 
                  [bultitude "0.2.2"]                  ;find Clojure namespaces on the classpath
@@ -74,16 +75,13 @@
                  ;;[akka/akka-clojure "0.1.0"]          ; akka
                  ;;[co.paralleluniverse/pulsar "0.1.1"] ; Pulsar
 
-                 [http-kit "2.1.10"]
+                 [http-kit "2.1.11"]
 
                  [jayq "2.4.0"]                       ; jQuery wrapper
                  ;;[prismatic/dommy "0.0.2"]            ; CS Template
                  [cljstang "0.1"]]
   :repositories {"sonatype-oss-public" "https://oss.sonatype.org/content/groups/public/"}
-  :profiles {:dev {:plugins [[codox "0.6.4"]
-                             [lein-pprint "1.1.1"]
-                             [lein-ancient "0.4.4"] ; lein ancient
-                             [lein-checkall "0.1.1"]]}
+  :profiles {:dev {:plugins [[lein-checkall "0.1.1"]]}
              :1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}
              :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}}
   :aliases {"run-tests" ["with-profile" "1.4:1.5" "test"]}

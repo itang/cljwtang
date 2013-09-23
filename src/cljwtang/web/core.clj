@@ -141,7 +141,7 @@
         `(fn [~'req]
            (let [{:keys ~args :or {~'req ~'req}} (:params ~'req)]
              ~@(let [validated (boolean (:validate meta))
-                     authenticated (get-prop meta :authenticated)
+                     authenticated (get-prop meta :auth)
                      perm (get-prop meta :perm)]
                  (-> body
                    (?> validated with-validates meta)
@@ -162,11 +162,9 @@
     :patch `(PATCH ~path  ~'req ~handler)
     `(ANY ~path ~'req ~handler)))
 
-(defn- make-funcpoint [name fp-name url perm]
+(defn- make-funcpoint [name fp]
   `(def ~(symbol (str name "-fp"))
-     (new-funcpoint {:name ~fp-name
-                     :url ~url
-                     :perm ~perm})))
+     (new-funcpoint ~fp)))
 
 (defn- get-route-info [name meta]
   (let [method (or (:method meta)
@@ -178,17 +176,24 @@
     (when method
       {:method method :path path})))
 
+(defn- get-fp-info [name path meta]
+  (when-let [fp-name (or (:fp meta) (:fp-name meta))]
+    {:name (when-> fp-name true? name)
+     :url path
+     :perm (get-prop meta :perm)
+     :description (or (:description meta) (:doc meta))
+     :module (:module meta)}))
+
 (defn- make-routes [name meta]
   (when-let [route-info (get-route-info name meta)]
     (let [p (gensym)
           method (:method route-info)
           path (:path route-info)
           path (str (:path (get-routes-config)) path)
-          fp-name (:fp-name meta)]
+          fp-info (get-fp-info name path meta)]
     `(let [~p ~path]
         (route-one/defroute ~name ~p)
-        ~(when fp-name
-           (make-funcpoint name fp-name p (:perm meta)))
+        ~(when fp-info (make-funcpoint name fp-info))
         (some-> *routes* (swap! conj ~(make-compojure-route method p name)))))))
 
 (defmacro defhandler

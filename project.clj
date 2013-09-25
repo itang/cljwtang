@@ -10,7 +10,7 @@
                  [org.clojure/core.incubator "0.1.3"]
                  [org.clojure/core.memoize "0.5.6"]
                  [org.clojure/core.match "0.2.0-rc5"]
-                 [org.clojure/core.typed "0.2.9"]
+                 [org.clojure/core.typed "0.2.13"]
                  [org.clojure/tools.nrepl "0.2.3"]
                  [org.clojure/tools.macro "0.1.5"]
                  [org.clojure/tools.reader "0.7.7"]

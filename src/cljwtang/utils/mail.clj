@@ -1,7 +1,7 @@
 (ns cljwtang.utils.mail
   (:require [clojure.core.async :refer [go]]
             [clojure.string :as string]
-            [cljtang.core :refer :all]
+            [cljtang.lib :refer :all]
             [postal.core :as postal]
             [cljwtang.config.app :as config]
             [cljwtang.web.view :as view]))

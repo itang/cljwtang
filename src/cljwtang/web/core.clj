@@ -1,7 +1,6 @@
 (ns cljwtang.web.core
-  (:require [plumbing.core :refer [?> ?>>]]
-            [clojure.tools.macro :refer [name-with-attributes]]
-            [cljtang.core :refer :all]
+  (:require [clojure.tools.macro :refer [name-with-attributes]]
+            [cljtang.lib :refer :all]
             [compojure.core :refer :all]
             [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
             [noir.request :refer [*request*]]

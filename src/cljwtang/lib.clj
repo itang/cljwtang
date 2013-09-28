@@ -1,7 +1,6 @@
 (ns cljwtang.lib
-  (:require potemkin)
+  (:require [cljtang.lib :refer [import-vars import-macro import-fn import-def]])
   (:require [clojure.tools.logging :as log]
-            [plumbing core]
             [pandect.core]
             [ring.util response anti-forgery]
             [ring.middleware.anti-forgery]
@@ -15,24 +14,7 @@
             [cljwtang.web core request response view middleware]
             [cljwtang.utils env mail scrypt upload]))
 
-(potemkin/import-vars
- [potemkin
-  import-vars
-  import-fn
-  import-macro
-  import-def]
-
- [plumbing.core
-  for-map
-  safe-get
-  safe-get-in
-  map-vals
-  map-keys
-  ?>
-  ?>>
-  dissoc-in
-  keywordize-map]
-
+(import-vars
  [pandect.core
   sha1
   sha1-file

@@ -2,8 +2,7 @@
   (:refer-clojure :exclude [name sort])
   (:require [clojure.java.io :as io]
             [clojure.tools.logging :as log]
-            [bultitude.core :as bultitude]
-            [cljtang.core :refer :all]
+            [cljtang.lib :refer :all :as cljtang]
             [taoensso.tower :as tower]
             [korma.db :refer [defdb h2]]
             [clojure.tools.nrepl.server :as nrepl-server]
@@ -197,7 +196,7 @@
   "扫描获取所有应用模块
    规则: (var-get 'prefixns.module/module)"
   []
-  (let [ms (->> (bultitude/namespaces-on-classpath)
+  (let [ms (->> (cljtang/namespaces-on-classpath)
             (filter #(.endsWith (str %) ".module")))]
     (log/info "auto scan modules:" ms)
     (doseq [m ms]

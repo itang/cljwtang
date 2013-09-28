@@ -1,14 +1,12 @@
 (ns cljwtang.web.view
-  (:refer-clojure :exclude [name])
   (:require [clojure.string :as str]
             [clojure.tools.logging :as log]
-            [cljtang.core :refer :all]
+            [cljtang.lib :refer :all]
             [taoensso.tower :as tower]
             [compojure.response :as response]
             [noir.request :refer [*request*]]
             [cljwtang.core :as core]
             [cljwtang.config.app :as config]
-            [cljwtang.template.core :refer [name]]
             [cljwtang.web.core :refer :all]))
 
 (def ^:private static-context

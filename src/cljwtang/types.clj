@@ -1,7 +1,7 @@
 (ns cljwtang.types
   (:refer-clojure :exclude [name sort])
   (:require [clojure.tools.logging :as log]
-            [cljtang.core :refer :all]
+            [cljtang.lib :refer :all]
             [cljwtang.utils.util :refer [nil->empty]]))
 
 (defprotocol Base

@@ -9,19 +9,19 @@
                  [org.clojure/core.async "0.1.0-SNAPSHOT"]
                  [org.clojure/core.incubator "0.1.3"]
                  [org.clojure/core.memoize "0.5.6"]
-                 [org.clojure/core.match "0.2.0-rc5"]
+                 [org.clojure/core.match "0.2.0"]
                  [org.clojure/core.typed "0.2.13"]
                  [org.clojure/tools.nrepl "0.2.3"]
                  [org.clojure/tools.macro "0.1.5"]
-                 [org.clojure/tools.reader "0.7.7"]
+                 [org.clojure/tools.reader "0.7.8"]
                  ;[org.clojure/tools.namespace "0.2.4"]
 
-                 [bultitude "0.2.2"]                  ;find Clojure namespaces on the classpath
-                 [potemkin "0.3.3"]
+                 [cljtang "0.1.3"]
+                   ;[bultitude "0.2.2"]                  ;find Clojure namespaces on the classpath
+                   ;[potemkin "0.3.3"]
+                   ;[prismatic/plumbing "0.1.0"]
+
                  ;;[prismatic/schema "0.1.1"]
-                 [prismatic/plumbing "0.1.0"]
-                 
-                 [cljtang "0.1.2"]
                  [clj-pretty-format "0.1.1"]
 
                  [commons-codec/commons-codec "1.8"]
@@ -60,7 +60,7 @@
                   :exclusions [ring/ring-core]]       ; authentication
                  [compojure "1.1.5"]                  ; web framework
                  [selmer "0.4.2"]                     ; A fast, Django inspired
-                 [lib-noir "0.6.9"]                   ; middleware
+                 [lib-noir "0.7.0"]                   ; middleware
                  [clojurewerkz/route-one "1.0.0-rc2"] ; generates HTTP resource routes
                  [ring-anti-forgery "0.3.0"]          ; prevents CSRF attacks
 

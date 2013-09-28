@@ -1,6 +1,6 @@
 (ns cljwtang.server
   (:require [clojure.java.io :as io]
-            [cljtang.core :refer :all]
+            [cljtang.lib :refer :all]
             [compojure.route :as route]
             [taoensso.tower.ring :refer [wrap-i18n-middleware]]
             [org.httpkit.server :as httpkit]

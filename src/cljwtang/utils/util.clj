@@ -1,5 +1,5 @@
 (ns cljwtang.utils.util
-  (:require [cljtang.core :refer :all]
+  (:require [cljtang.lib :refer :all]
             [clojure.core.typed :refer :all :as typed]))
 
 (ann nil-empty [(Seqable Any) -> (Seqable Any)])

@@ -129,6 +129,7 @@
   *not-found-content*
   *exception-handle-fn*
   *load-credentials-fn*
+  *unauthorized-handler*
   get-not-found-content
   set-user-logined?-fn!
   set-app-config-fn!
@@ -136,7 +137,8 @@
   set-db-config!
   set-not-found-content!
   set-exception-handle-fn!
-  set-load-credentials-fn!]
+  set-load-credentials-fn!
+  set-unauthorized-handler!]
 
  [cljwtang.web.core
   message success-message failture-message error-message info-message
@@ -166,7 +168,7 @@
   wrap-request-log
   wrap-dev-helper
   wrap-profile
-  wrap-exception-handling ]
+  wrap-exception-handling]
 
  [cljwtang.utils.env
   env-config

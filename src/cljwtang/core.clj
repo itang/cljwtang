@@ -28,6 +28,8 @@
 
 (defdynamic ^{:doc "异常处理"} exception-handle-fn nil)
 
+(defdynamic ^{:doc "未授权处理"} unauthorized-handler nil)
+
 (defdynamic db-config
   (h2 {:subname "~/cljwtang_dev;AUTO_SERVER=TRUE"
        :user "sa"

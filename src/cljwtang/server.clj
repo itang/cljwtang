@@ -36,6 +36,11 @@
                           {:detail-message exception-info}
                           {:title msg}))))))
 
+(defn- default-unauthorized-handler [req]
+  (-> (h/html5 [:h2 "You do not have sufficient privileges to access " (:uri req)])
+    resp/response
+    (resp/status 401)))
+
 (defroutes full-app-routes
   (apply routes (app-routes))
   (GET "/_lib_version" [] version)
@@ -48,9 +53,7 @@
     (friend/authenticate {:allow-anon? true
                           :login-uri "/login"
                           :default-landing-uri "/"
-                          :unauthorized-handler #(-> (h/html5 [:h2 "You do not have sufficient privileges to access " (:uri %)])
-                                                   resp/response
-                                                   (resp/status 401))
+                          :unauthorized-handler (or *unauthorized-handler* default-unauthorized-handler)
                           :credential-fn #(scrypt-credential-fn *load-credentials-fn* %)
                           :workflows [(workflows/interactive-form)]})
     (wrap-exception-handling (or *exception-handle-fn* default-exception-handle))

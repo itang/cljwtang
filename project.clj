@@ -16,7 +16,7 @@
                  [org.clojure/tools.reader "0.7.8"]
                  ;[org.clojure/tools.namespace "0.2.4"]
 
-                 [cljtang "0.1.5"]
+                 [cljtang "0.1.6"]
                    ;[bultitude "0.2.2"]                  ;find Clojure namespaces on the classpath
                    ;[potemkin "0.3.3"]
                    ;[prismatic/plumbing "0.1.0"]

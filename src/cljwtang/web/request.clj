@@ -1,9 +1,15 @@
 (ns cljwtang.web.request
   (:require [noir.request]))
 
-(defn reuqest-params []
-  (:params noir.request/*request*))
+(defn req []
+  noir.request/*request*)
 
-(defn ajax? [req]
-  (= "XMLHttpRequest"
-     (get-in req [:headers "x-requested-with"])))
+(defn reuqest-params []
+  (:params (req)))
+
+(defn ajax?
+  ([]
+    (ajax? (req)))
+  ([req]
+    (= "XMLHttpRequest"
+       (get-in req [:headers "x-requested-with"]))))

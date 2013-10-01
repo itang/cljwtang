@@ -25,7 +25,7 @@
                  [clj-pretty-format "0.1.1"]
 
                  [commons-codec/commons-codec "1.8"]
-                 [com.lambdaworks/scrypt "1.4.0"]     ; scrypt
+                 ;[com.lambdaworks/scrypt "1.4.0"]     ; scrypt
 
                  [coercer "0.2.0"]                    ; conv types
                  [environ "0.4.0"]                    ; managing environment setting
@@ -33,6 +33,7 @@
                  [me.raynes/fs "1.4.5"]               ; file system
                  ;;[cc.qbits/tardis "0.3.1"]            ; UUID
                  [crypto-random "1.1.0"]              ; crypto
+                 [crypto-password "0.1.1"]            ; crypto
                  [pandect "0.3.0"]                    ; digest
                  ;;[clj-time "0.5.0"]                   ; date time
                  ;;[markdown-clj "0.9.19"]              ; markdown

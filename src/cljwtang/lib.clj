@@ -9,6 +9,7 @@
             [noir request response session validation]
             [noir.util.middleware]
             [cemerick.friend]
+            [crypto.password.scrypt]
             [cljwtang.core]
             [cljwtang.config.app]
             [cljwtang.web core request response view middleware]
@@ -40,12 +41,7 @@
   path-for
   url-for
   defroute
-  with-base-url
-  #_(route)
-  ]
-
- [noir.request
-  *request*]
+  with-base-url]
 
  [noir.response
   json
@@ -133,6 +129,7 @@
   clear-template-cache!]
 
  [cljwtang.web.request
+  req
   ajax?
   reuqest-params]
 
@@ -163,9 +160,6 @@
   mail-vendor-by-email-account]
 
  [cljwtang.utils.scrypt
-  encrypt
-  check
-  verify
   scrypt-credential-fn]
 
  [cljwtang.utils.upload
@@ -186,3 +180,7 @@
 (import-fn noir.validation/errors? validate-errors?)
 (import-fn noir.validation/on-error validate-on-error)
 (import-def noir.validation/*errors* *validate-errors*)
+
+(import-fn crypto.password.scrypt/encrypt scrypt-encrypt)
+(import-fn crypto.password.scrypt/check scrypt-check)
+(import-fn cljwtang.utils.scrypt/verify scrypt-verify)

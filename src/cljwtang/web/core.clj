@@ -8,7 +8,7 @@
             [noir.validation]
             [cemerick.friend :as friend]
             [clojurewerkz.route-one.core :as route-one]
-            [cljwtang.core :as core :refer [template-engine new-funcpoint]]
+            [cljwtang.core :as core :refer [*template-engine* new-funcpoint]]
             [cljwtang.template.core :as template]
             [cljwtang.utils.env :as env]))
 
@@ -66,32 +66,32 @@
 (defn render-string
   "render template from string"
   [template data]
-  (template/render-string template-engine template data))
+  (template/render-string *template-engine* template data))
 
 (defn render-file
   "render template form file"
   [template-name data]
-  (template/render-file template-engine template-name data))
+  (template/render-file *template-engine* template-name data))
 
 (defn regist-helper
   "regist helper"
   [k v]
-  (template/regist-helper template-engine k v))
+  (template/regist-helper *template-engine* k v))
 
 (defn regist-tag
   "regist tags"
   [k v]
-  (template/regist-tag template-engine k v (->> k name (str "end-") keyword)))
+  (template/regist-tag *template-engine* k v (->> k name (str "end-") keyword)))
 
 (defn template-engine-name
-  "template-engine name"
+  "*template-engine* name"
   []
-  (template/name template-engine))
+  (template/name *template-engine*))
 
 (defn clear-template-cache!
   "clear template's cache"
   []
-  (template/clear-cache! template-engine))
+  (template/clear-cache! *template-engine*))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defdynamic routes nil)

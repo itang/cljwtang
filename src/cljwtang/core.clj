@@ -19,6 +19,8 @@
 
 (defdynamic ^{:doc "应用配置函数"} app-config-fn env/env-config)
 
+(defdynamic ^{:doc "默认引擎"} template-engine nil)
+
 (defdynamic user-logined?-fn (constantly false))
 
 (defdynamic current-user-fn (constantly nil))
@@ -39,9 +41,6 @@
 (defdb default-db (get-db-config))
 
 (defdynamic not-found-content "Not Found")
-
-(defonce template-engine
-  (selmer/new-selmer-template-engine))
 
 (def ^{:constant true} default-module-sort 100)
 
@@ -120,7 +119,7 @@
                      (flatten)
                      (apply hash-map))]
     (doseq [[k v] helpers]
-      (template/regist-helper template-engine k v))))
+      (template/regist-helper *template-engine* k v))))
 
 (defn app-sub-modules
   "获取应用的所有子模块"
@@ -171,18 +170,18 @@
 
 (defn- cljwtang-view-init []
   (log/info "regist-helper" "i18n")
-  (template/regist-helper template-engine
+  (template/regist-helper *template-engine*
                           :i18n
                           (fn [args context]
                             (tower/t (-> args first keyword))))
   (log/info "regist-helper" "chan-active")
-  (template/regist-helper template-engine
+  (template/regist-helper *template-engine*
                           :chan-active
                           (fn [args context]
                             (when (= (first args) (:channel context))
                               "active")))
   (log/info "regist-helper anti-forgery-field")
-  (template/regist-helper template-engine
+  (template/regist-helper *template-engine*
                           :anti-forgery-field
                           (fn [args context]
                             (anti-forgery-field))))
@@ -191,6 +190,11 @@
   (new-ui-module
    {:name "cljwtang-view"
     :init (fn [m] (cljwtang-view-init))}))
+
+(defn- selmer-template-engine-module []
+  (new-ui-module
+    {:name "selmer-template-engine"
+     :init (fn [_] (set-template-engine! (selmer/new-selmer-template-engine)))}))
 
 (defn- auto-scan-modules
   "扫描获取所有应用模块
@@ -216,6 +220,7 @@
       (fn [m]
         (log/info "regist builtin modules...")
         (regist-modules!
+          (selmer-template-engine-module)
           (tower-module)
           (nrepl-module)
           (cljwtang-view-module))

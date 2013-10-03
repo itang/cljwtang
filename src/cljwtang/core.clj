@@ -42,6 +42,11 @@
 
 (defdynamic not-found-content "Not Found")
 
+(defdynamic anti-forgery-error-response
+  {:status 403
+   :headers {"Content-Type" "text/html"}
+   :body "<h1>Invalid anti-forgery token</h1>"})
+
 (def ^{:constant true} default-module-sort 100)
 
 (defn new-ui-module

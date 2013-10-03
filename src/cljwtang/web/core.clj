@@ -147,7 +147,7 @@
                    (?> authenticated with-authenticated)
                    (?> perm with-authorized perm)))))]
     `(def ~name ~(if (boolean (:anti-forgery meta))
-                   `(wrap-anti-forgery ~handler-fn)
+                   `(wrap-anti-forgery ~handler-fn {:error-response core/*anti-forgery-error-response*})
                    handler-fn))))
 
 (defn- make-compojure-route [method path handler]

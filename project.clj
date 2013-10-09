@@ -60,7 +60,7 @@
                  [com.cemerick/friend "0.2.0"
                   :exclusions [ring/ring-core]]       ; authentication
                  [compojure "1.1.5"]                  ; web framework
-                 [selmer "0.4.3"]                     ; A fast, Django inspired
+                 [selmer "0.4.4"]                     ; A fast, Django inspired
                  [lib-noir "0.7.1"]                   ; middleware
                  [clojurewerkz/route-one "1.0.0-rc2"] ; generates HTTP resource routes
                  [ring-anti-forgery "0.3.0"]          ; prevents CSRF attacks

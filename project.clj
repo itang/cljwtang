@@ -13,7 +13,7 @@
                  [org.clojure/core.typed "0.2.13"]
                  [org.clojure/tools.nrepl "0.2.3"]
                  [org.clojure/tools.macro "0.1.5"]
-                 [org.clojure/tools.reader "0.7.8"]
+                 [org.clojure/tools.reader "0.7.9"]
                  ;[org.clojure/tools.namespace "0.2.4"]
 
                  [cljtang "0.1.6"]
@@ -76,7 +76,7 @@
                  ;;[akka/akka-clojure "0.1.0"]          ; akka
                  ;;[co.paralleluniverse/pulsar "0.1.1"] ; Pulsar
 
-                 [http-kit "2.1.11"]
+                 [http-kit "2.1.12"]
 
                  [jayq "2.4.0"]                       ; jQuery wrapper
                  ;;[prismatic/dommy "0.0.2"]            ; CS Template

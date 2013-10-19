@@ -60,7 +60,7 @@
                  [com.cemerick/friend "0.2.0"
                   :exclusions [ring/ring-core]]       ; authentication
                  [compojure "1.1.5"]                  ; web framework
-                 [selmer "0.4.4"]                     ; A fast, Django inspired
+                 [selmer "0.4.7"]                     ; A fast, Django inspired
                  [lib-noir "0.7.1"]                   ; middleware
                  [clojurewerkz/route-one "1.0.0-rc2"] ; generates HTTP resource routes
                  [ring-anti-forgery "0.3.0"]          ; prevents CSRF attacks
@@ -68,7 +68,7 @@
                  [com.h2database/h2 "1.3.173"]        ; H2 Driver
                  [postgresql "9.1-901-1.jdbc4"]       ; PostgreSQL Driver
                  [org.clojure/java.jdbc "0.2.3"]      ; java jdbc
-                 [korma "0.3.0-RC5"]                  ; DB
+                 [korma "0.3.0-RC6"]                  ; DB
                  [me.itang/lobos "1.0.0-beta1"]       ; migrations
 
                  ;;[clojurewerkz/elastisch "1.1.0-rc1"] ; ElasticSearch

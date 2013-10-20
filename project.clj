@@ -65,7 +65,7 @@
                  [clojurewerkz/route-one "1.0.0-rc2"] ; generates HTTP resource routes
                  [ring-anti-forgery "0.3.0"]          ; prevents CSRF attacks
 
-                 [com.h2database/h2 "1.3.173"]        ; H2 Driver
+                 [com.h2database/h2 "1.3.174"]        ; H2 Driver
                  [postgresql "9.1-901-1.jdbc4"]       ; PostgreSQL Driver
                  [org.clojure/java.jdbc "0.2.3"]      ; java jdbc
                  [korma "0.3.0-RC6"]                  ; DB
@@ -76,7 +76,7 @@
                  ;;[akka/akka-clojure "0.1.0"]          ; akka
                  ;;[co.paralleluniverse/pulsar "0.1.1"] ; Pulsar
 
-                 [http-kit "2.1.12"]
+                 [http-kit "2.1.13"]
 
                  [jayq "2.4.0"]                       ; jQuery wrapper
                  ;;[prismatic/dommy "0.0.2"]            ; CS Template

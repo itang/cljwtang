@@ -10,10 +10,10 @@
                  [org.clojure/core.incubator "0.1.3"]
                  [org.clojure/core.memoize "0.5.6"]
                  [org.clojure/core.match "0.2.0"]
-                 [org.clojure/core.typed "0.2.13"]
+                 [org.clojure/core.typed "0.2.15"]
                  [org.clojure/tools.nrepl "0.2.3"]
                  [org.clojure/tools.macro "0.1.5"]
-                 [org.clojure/tools.reader "0.7.9"]
+                 [org.clojure/tools.reader "0.7.10"]
                  ;[org.clojure/tools.namespace "0.2.4"]
 
                  [cljtang "0.1.6"]
@@ -60,8 +60,8 @@
                  [com.cemerick/friend "0.2.0"
                   :exclusions [ring/ring-core]]       ; authentication
                  [compojure "1.1.5"]                  ; web framework
-                 [selmer "0.4.7"]                     ; A fast, Django inspired
-                 [lib-noir "0.7.1"]                   ; middleware
+                 [selmer "0.5.0"]                     ; A fast, Django inspired
+                 [lib-noir "0.7.2"]                   ; middleware
                  [clojurewerkz/route-one "1.0.0-rc2"] ; generates HTTP resource routes
                  [ring-anti-forgery "0.3.0"]          ; prevents CSRF attacks
 

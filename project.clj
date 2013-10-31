@@ -56,12 +56,12 @@
                  ;;[clj-http "0.6.4"]                   ; http client
                  ;;[com.novemberain/pantomime "1.7.0"]  ;MIME types
 
-                 [ring "1.2.0"]
+                 [ring "1.2.1"]
                  [com.cemerick/friend "0.2.0"
                   :exclusions [ring/ring-core]]       ; authentication
-                 [compojure "1.1.5"]                  ; web framework
-                 [selmer "0.5.0"]                     ; A fast, Django inspired
-                 [lib-noir "0.7.2"]                   ; middleware
+                 [compojure "1.1.6"]                  ; web framework
+                 [selmer "0.5.1"]                     ; A fast, Django inspired
+                 [lib-noir "0.7.4"]                   ; middleware
                  [clojurewerkz/route-one "1.0.0-rc2"] ; generates HTTP resource routes
                  [ring-anti-forgery "0.3.0"]          ; prevents CSRF attacks
 

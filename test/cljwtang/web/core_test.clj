@@ -1,6 +1,8 @@
 (ns cljwtang.web.core-test
   (:use clojure.test
-        cljwtang.web.core))
+        cljwtang.web.core
+        cljwtang.core
+        cljwtang.template.selmer))
 
 (defhandler h1 [a b]
   (str a b))
@@ -19,5 +21,6 @@
          (message true "msg"))))
 
 (deftest render-string-test
+  (set-template-engine! (new-selmer-template-engine))
   (is (= "hello, itang"
          (render-string "hello, {{name}}" {:name "itang"}))))

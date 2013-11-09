@@ -10,7 +10,7 @@
                  [org.clojure/core.incubator "0.1.3"]
                  [org.clojure/core.memoize "0.5.6"]
                  [org.clojure/core.match "0.2.0"]
-                 [org.clojure/core.typed "0.2.15"]
+                 [org.clojure/core.typed "0.2.17"]
                  [org.clojure/tools.nrepl "0.2.3"]
                  [org.clojure/tools.macro "0.1.5"]
                  [org.clojure/tools.reader "0.7.10"]
@@ -41,7 +41,7 @@
 
                  ;;[sonian/carica "1.0.2"]              ; config
                  [cheshire "5.2.0"]                   ; JSON
-                 [com.draines/postal "1.11.0"]         ; email
+                 [com.draines/postal "1.11.1"]         ; email
                  [com.taoensso/tower "1.7.1"]         ; i18n
 
                  [org.clojure/tools.logging "0.2.6"]  ; logging
@@ -61,7 +61,7 @@
                   :exclusions [ring/ring-core]]       ; authentication
                  [compojure "1.1.6"]                  ; web framework
                  [selmer "0.5.1"]                     ; A fast, Django inspired
-                 [lib-noir "0.7.4"]                   ; middleware
+                 [lib-noir "0.7.5"]                   ; middleware
                  [clojurewerkz/route-one "1.0.0-rc2"] ; generates HTTP resource routes
                  [ring-anti-forgery "0.3.0"]          ; prevents CSRF attacks
 
@@ -78,14 +78,14 @@
 
                  [http-kit "2.1.13"]
 
-                 [jayq "2.4.0"]                       ; jQuery wrapper
+                 [jayq "2.5.0"]                       ; jQuery wrapper
                  ;;[prismatic/dommy "0.0.2"]            ; CS Template
                  [cljstang "0.1"]]
   :repositories {"sonatype-oss-public" "https://oss.sonatype.org/content/groups/public/"}
   :profiles {:dev {:plugins [[lein-checkall "0.1.1"]]}
-             :1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}
-             :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}}
-  :aliases {"run-tests" ["with-profile" "1.4:1.5" "test"]}
+             :1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}
+             :1.6 {:dependencies [[org.clojure/clojure "1.6.0-alpha2"]]}}
+  :aliases {"run-tests" ["with-profile" "1.5:1.6" "test"]}
   :core.typed {:check [cljwtang.core]}
   :global-vars {*warn-on-reflection* true}
   :injections [(require 'clojure.pprint)]
